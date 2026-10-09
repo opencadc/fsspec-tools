@@ -20,21 +20,21 @@ repos:
     hooks:
       - id: ruff-check
         name: Ruff lint
-        entry: uv run --locked ruff check --fix --exit-non-zero-on-fix
+        entry: uv run --locked ruff check --force-exclude --fix --exit-non-zero-on-fix
         language: unsupported
         types_or: [python, pyi]
         require_serial: true
 
       - id: ruff-format
         name: Ruff format
-        entry: uv run --locked ruff format
+        entry: uv run --locked ruff format --force-exclude
         language: unsupported
         types_or: [python, pyi]
         require_serial: true
 
       - id: ty
         name: ty
-        entry: uv run --locked ty check src/vosfs src/fsspec-cli/src/fsspec_cli
+        entry: uv run --locked ty check
         language: unsupported
         pass_filenames: false
         always_run: true
@@ -42,13 +42,11 @@ repos:
       - id: pymarkdown
         name: PyMarkdown
         # MD013 line length is handled by the editor. MD030/MD033/MD046 conflict
-        # with the MkDocs/Material authoring model the user docs use: MD033 for
-        # the required grid-cards <div>, MD030 for its "-   " card markers, and
-        # MD046 because indented admonition/card bodies read as indented code.
+        # with the MkDocs/Material authoring model the user docs use.
         entry: uv run --locked pymarkdown --disable-rules MD013,MD030,MD033,MD046 scan
         language: unsupported
         types: [markdown]
-        exclude: ^(CHANGELOG\.md|src/fsspec-cli/CHANGELOG\.md)$
+        exclude: (^|/)CHANGELOG\.md$
 
       - id: commitizen
         name: Commitizen message

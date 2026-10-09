@@ -1,123 +1,47 @@
 [project]
-name = "vosfs"
-version = "0.11.0"
-description = "An asynchronous fsspec filesystem for the OpenCADC VOSpace profile"
-readme = "README.md"
-authors = [
-    { name = "Shiny Brar  (he/il)", email = "charanjotbrar@gmail.com" }
-]
+name = "vostools-workspace"
+version = "0"
+description = "uv workspace for the vos, vosfs and fss-cli packages; not published"
 requires-python = ">=3.10"
-license = "BSD-3-Clause"
-license-files = ["LICENSE"]
-keywords = ["fsspec", "vospace", "opencadc", "cavern", "canfar", "filesystem", "astronomy"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Intended Audience :: Science/Research",
-    "Intended Audience :: Developers",
-    "Operating System :: POSIX :: Linux",
-    "Operating System :: MacOS",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-    "Topic :: Scientific/Engineering :: Astronomy",
-    "Topic :: System :: Filesystems",
-    "Typing :: Typed",
-]
-dependencies = [
-    "defusedxml>=0.7",
-    "fsspec>=2026.6.0",
-    "httpx>=0.27",
-]
 
-[project.urls]
-Homepage = "https://github.com/shinybrar/vosfs"
-Documentation = "https://shinybrar.github.io/vosfs/"
-Repository = "https://github.com/shinybrar/vosfs"
-Issues = "https://github.com/shinybrar/vosfs/issues"
-Changelog = "https://github.com/shinybrar/vosfs/blob/main/CHANGELOG.md"
+[tool.uv]
+package = false
 
-[project.entry-points."fsspec.specs"]
-vos = "vosfs:VOSpaceFileSystem"
-
-[build-system]
-requires = ["uv_build>=0.11.29,<0.12.0"]
-build-backend = "uv_build"
+[tool.uv.workspace]
+members = ["libs/*"]
 
 [dependency-groups]
 dev = [
-    "commitizen>=4.16.5,<5",
-    "dask[dataframe]>=2026.7.1",
-    "lxml>=5",
-    "mike @ git+https://github.com/squidfunk/mike.git@2d4ad799442f4592db8ad53b179bfb33db8c69ac",
-    "mkdocstrings-python>=2.0.5",
-    "numpy>=1.26",
-    "pandas>=2",
-    "pre-commit>=4.6.0",
-    "pyarrow>=15",
-    "pymarkdownlnt>=0.9.39",
-    "pytest>=9.1.1",
-    "pytest-asyncio>=0.24",
-    "pytest-cov>=7.1.0",
-    "respx>=0.21",
-    "ruff>=0.15.22",
-    "ty>=0.0.60",
-    "zarr>=3 ; python_full_version >= '3.11'",
-    "zensical>=0.0.50",
+    "commitizen>=4.19.2,<5",
+    "pre-commit>=4.6.2",
+    "pymarkdownlnt>=0.9.40",
+    "ruff>=0.16.10",
+    "ty>=0.0.85",
 ]
-[tool.pytest]
-addopts = [
-    "-ra",
-    "--strict-config",
-    "--strict-markers",
-    "--cov=vosfs",
-    "--cov-report=term-missing",
-]
-testpaths = ["tests"]
-asyncio_mode = "auto"
-[tool.coverage.run]
-branch = true
-source = ["vosfs"]
 
-[tool.coverage.report]
-fail_under = 90
-show_missing = true
-
+# Repository policy. A package that is not yet clean extends this table with a narrower
+# select (see libs/vos/pyproject.toml) and drops the override once it complies.
 [tool.ruff]
-src = ["src"]
-
+line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
     "COM812", # Conflicts with the formatter.
+    "CPY001", # Each package's LICENSE file is authoritative; no per-file headers.
     "ISC001", # Conflicts with the formatter.
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"src/vosfs/_{moving,removal,transfer}.py" = [
-    # These modules are VOSpaceFileSystem's own implementation, split out of
-    # filesystem.py for size. Reaching the filesystem's internal seams is
-    # intra-implementation access, not a crossing of the public boundary.
-    "SLF001",
-]
-"src/fsspec-cli/src/fsspec_cli/*.py" = [
-    # fsspec's async filesystem API is underscore-prefixed by convention
-    # (`_info`, `_ls`, `_cat_file`, ...). Awaiting those hooks is the documented
-    # way to drive an AsyncFileSystem, not private-member access.
-    "SLF001",
-]
 "**/tests/**/*.py" = [
-    "ANN",  # Tests are outside the ty gate.
-    "D",    # Tests describe behavior through their names.
-    "INP001", # Tests do not need to form a Python package.
-    "S101", # pytest assertions are expected.
-    "S105", # Literal token/secret values are fixtures, not real credentials.
-    "S106", # Literal token/secret arguments are fixtures, not real credentials.
-    "SLF001", # Tests exercise internal seams and coroutine hooks by design.
+    "ANN",     # Tests are outside the ty gate.
+    "D",       # Tests describe behavior through their names.
+    "INP001",  # Tests do not need to form a Python package.
+    "S101",    # pytest assertions are expected.
+    "S105",    # Literal token/secret values are fixtures, not real credentials.
+    "S106",    # Literal token/secret arguments are fixtures, not real credentials.
+    "SLF001",  # Tests exercise internal seams by design.
     "PLR2004", # Status codes and sizes are self-evident magic values in tests.
-    "FBT001", # Parametrized tests pass boolean cases positionally.
+    "FBT001",  # Parametrized tests pass boolean cases positionally.
     "PLC0415", # Optional-dependency imports are local, guarded by importorskip.
 ]
 
@@ -128,19 +52,25 @@ convention = "google"
 docstring-code-format = true
 
 [tool.ty.src]
-exclude = ["tests/"]
+include = ["libs/*/src"]
 
-[tool.uv.workspace]
-members = ["src/fsspec-cli"]
+# vos type checking ratchet: these rules report as warnings in vos until its findings are
+# fixed; every other rule is an error. Remove a rule from the list once vos is clean for it.
+[[tool.ty.overrides]]
+include = ["libs/vos/src/**"]
+rules = { invalid-argument-type = "warn", no-matching-overload = "warn", unresolved-attribute = "warn", unsupported-operator = "warn" }
+
+[tool.ty.terminal]
+error-on-warning = false
 
 [tool.commitizen]
 name = "cz_customize"
 
 [tool.commitizen.customize]
 message_template = "{{change_type}}{% if scope %}({{scope}}){% endif %}{% if breaking %}!{% endif %}: {{subject}}{% if body %}\n\n{{body}}{% endif %}{% if breaking %}\n\nBREAKING CHANGE: {{breaking}}{% endif %}{% if footer %}\n\n{{footer}}{% endif %}"
-example = "feat(filesystem): add authenticated reads"
-schema = "<type>(<scope>): <description>"
-schema_pattern = "(?s)^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\\(\\S+\\))?!?: [^\\r\\n]+((\\r?\\n\\r?\\n.*)|(\\s*))?$"
+example = "fix(vos): handle missing node properties"
+schema = "<type>(<scope>): <description>, scope one or more of vos, vosfs, fss-cli, repo"
+schema_pattern = "(?s)^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\\((vos|vosfs|fss-cli|repo)(,(vos|vosfs|fss-cli|repo))*\\))?!?: [^\\r\\n]+((\\r?\\n\\r?\\n.*)|(\\s*))?$"
 
 [[tool.commitizen.customize.questions]]
 type = "list"
@@ -163,7 +93,7 @@ choices = [
 [[tool.commitizen.customize.questions]]
 type = "input"
 name = "scope"
-message = "Scope (optional)"
+message = "Scope (optional): vos, vosfs, fss-cli or repo; comma-separate several"
 
 [[tool.commitizen.customize.questions]]
 type = "input"
