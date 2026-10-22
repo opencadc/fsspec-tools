@@ -170,12 +170,12 @@ class VOSpaceSim:
         return httpx.Response(200, content=self._data_document(path))
 
     def _node_path(self, request: httpx.Request) -> str:
-        suffix = request.url.path[len(_NODES_PREFIX) :]
+        suffix = request.url.raw_path.split(b"?", 1)[0].decode()[len(_NODES_PREFIX) :]
         return paths.strip_protocol(unquote(suffix)) if suffix else "/"
 
     def _uri(self, path: str) -> str:
         authority = self.authorities.get(path, AUTHORITY)
-        return f"vos://{authority}" if path == "/" else f"vos://{authority}{path}"
+        return f"vos://{authority}" if path == "/" else f"vos://{authority}{quote(path)}"
 
     def _container_document(self, path: str, *, children: bool = True) -> bytes:
         children_xml = "".join(
@@ -228,7 +228,7 @@ class VOSpaceSim:
     def _negotiate(self, request: httpx.Request) -> httpx.Response:
         if request.url.params.get("REQUEST") == "redirect":
             target = request.url.params.get("TARGET", "")
-            path = "/" + target.split("://", 1)[-1].split("/", 1)[-1]
+            path = unquote(urlsplit(target).path) or "/"
             endpoint = f"{BASE_URL}/files?p={quote(path)}"
             return httpx.Response(303, headers={"Location": endpoint})
         target = target_path(request.content)
@@ -253,7 +253,7 @@ class VOSpaceSim:
             return httpx.Response(201)
         if path in self.targets:
             target = urlsplit(self.targets[path])
-            path = target.path or "/"
+            path = unquote(target.path) or "/"
         content = self.blobs.get(path)
         if content is None:
             return httpx.Response(404)

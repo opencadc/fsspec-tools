@@ -13,6 +13,7 @@ import re
 from importlib.metadata import version
 from typing import TYPE_CHECKING, Any
 from urllib.parse import quote, unquote, urlsplit
+from xml.etree import ElementTree as ET
 
 import httpx
 import pytest
@@ -159,11 +160,9 @@ def transfer_details(endpoint: str) -> bytes:
 
 def target_path(content: bytes | None) -> str:
     """Extract the internal path from a transfer document's target element."""
-    match = re.search(r"<[^>]*target[^>]*>([^<]+)</", (content or b"").decode())
-    if match is None:
-        return "/"
-    prefix = f"vos://{AUTHORITY}"
-    return match.group(1).strip()[len(prefix) :] or "/"
+    root = ET.fromstring(content or b"")  # noqa: S314 - test-owned transfer XML
+    target = root.findtext("{http://www.ivoa.net/xml/VOSpace/v2.0}target", "")
+    return unquote(urlsplit(target).path) or "/"
 
 
 def data_node_response(request: httpx.Request, files: dict[str, bytes]) -> httpx.Response:
@@ -175,11 +174,11 @@ def data_node_response(request: httpx.Request, files: dict[str, bytes]) -> httpx
         return httpx.Response(200, content=ROOT_CONTAINER)
     if path not in files:
         return httpx.Response(404)
-    document = data_xml(f"vos://{AUTHORITY}{path}", len(files[path]))
+    document = data_xml(f"vos://{AUTHORITY}{quote(path)}", len(files[path]))
     return httpx.Response(200, content=document)
 
 
-def mock_transfers(  # noqa: C901 - one handler per transfer step
+def mock_transfers(
     router: respx.Router,
     files: dict[str, bytes],
     *,
@@ -203,10 +202,8 @@ def mock_transfers(  # noqa: C901 - one handler per transfer step
     def negotiate_post(request: httpx.Request) -> httpx.Response:
         if request.url.params.get("REQUEST") == "redirect":
             target = request.url.params.get("TARGET", "")
-            internal = "/" + target.split("://", 1)[-1].split("/", 1)[-1]
-            if internal == "/":
-                internal = "/"
-            endpoint = f"{BASE_URL}/files?p={quote(internal if internal.startswith('/') else '/' + internal)}"
+            internal = unquote(urlsplit(target).path) or "/"
+            endpoint = f"{BASE_URL}/files?p={quote(internal)}"
             return httpx.Response(303, headers={"Location": endpoint})
         details = f"{BASE_URL}/details?t={quote(target_path(request.content))}"
         return httpx.Response(303, headers={"Location": details})

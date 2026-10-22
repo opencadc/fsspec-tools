@@ -26,7 +26,7 @@ from urllib.parse import quote, urlencode, urlsplit
 import httpx
 
 from vosfs import _coordination as coordination
-from vosfs import _integrity, capabilities, errors, negotiate, nodes, staging, transport
+from vosfs import _integrity, capabilities, errors, negotiate, nodes, paths, staging, transport
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator, Callable, Mapping, Sequence
@@ -76,7 +76,7 @@ async def _negotiate_redirect_read(
     bindings = await filesystem._get_bindings()
     sync_url = bindings.require_sync()
     authority = await filesystem._require_authority()
-    target = f"vos://{authority}{path}"
+    target = f"vos://{authority}{paths.encode_url_path(path)}"
     query = urlencode(
         {
             "TARGET": target,
@@ -113,7 +113,7 @@ async def _negotiate_document(
     bindings = await filesystem._get_bindings()
     sync_url = bindings.require_sync()
     authority = await filesystem._require_authority()
-    target = f"vos://{authority}{path}"
+    target = f"vos://{authority}{paths.encode_url_path(path)}"
     document = nodes.build_transfer_document(target, direction=direction, protocols=[protocol_uri])
     post = await filesystem._send_to_service("POST", sync_url, content=document, headers=nodes.XML_HEADERS)
     filesystem._raise_for_status(post, path=path, allowed=(transport.HTTP_SEE_OTHER,))

@@ -94,6 +94,10 @@ absolute path.
 
 ## Reading and writing
 
+Paths are literal. `/project/100%41` names a file containing `%41`, not
+`/project/100A`. Spaces, `?`, and `#` also remain part of the filename.
+`vosfs` encodes these characters in node and transfer URIs.
+
 Partial `cat_file` / `cat_ranges` reads send HTTP `Range` when the bounds allow.
 If the negotiated byte endpoint returns a validated `206`, only those bytes are
 kept. If it returns `200`/`204` (Cavern ignores `Range`), `vosfs` treats the

@@ -1004,7 +1004,7 @@ class VOSpaceFileSystem(AsyncFileSystem):
         """PUT one ContainerNode at ``path``."""
         bindings = await self._get_bindings()
         authority = await self._require_authority()
-        document = nodes.build_container_document(f"vos://{authority}{path}")
+        document = nodes.build_container_document(f"vos://{authority}{paths.encode_url_path(path)}")
         url = bindings.require_nodes() + paths.encode_url_path(path)
         try:
             response = await self._send_to_service("PUT", url, content=document, headers=nodes.XML_HEADERS)

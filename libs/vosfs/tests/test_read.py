@@ -509,7 +509,7 @@ def test_literal_percent_targets_survive_scalar_list_and_bulk_coordinators(
         for call in router.calls
         if call.request.method == "POST" and str(call.request.url).startswith(SYNC_URL)
     ]
-    assert posts == [f"vos://{AUTHORITY}{internal}"] * 3
+    assert posts == [f"vos://{AUTHORITY}/authority/dir/100%2541"] * 3
     assert [
         call.request.url.params["p"]
         for call in router.calls
