@@ -63,6 +63,43 @@
 * Parameterize private command orchestration with concrete command labels
   without adding a supported command or public runner.
 
+## [0.11.0](https://github.com/opencadc/fsspec-tools/compare/fss-cli-v0.10.0...fss-cli-v0.11.0) (2026-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **vosfs,fss-cli:** User paths are literal. Percent escapes are no longer decoded by strip_protocol; callers must pass spaces and other filename characters literally. Server-returned node URIs are still decoded once.
+* **fss-cli:** the distribution is now fss-cli and the import package is fss_cli. Replace fsspec-cli with fss-cli in requirements, and fsspec_cli with fss_cli in imports and logging configuration. No compatibility alias is provided.
+* **vosfs,fss-cli:** vosfs and fsspec-cli are now distributed under the GNU Affero General Public License v3.0 or later. vosfs 0.11.0, fsspec-cli 0.10.0 and earlier releases remain under the BSD 3-Clause License.
+
+### Features
+
+* **fss-cli:** bold directory names in ls on a terminal ([#24](https://github.com/opencadc/fsspec-tools/issues/24)) ([7c96d98](https://github.com/opencadc/fsspec-tools/commit/7c96d98fb8b5d78f215f3e7026295fb53c04c639))
+* **fss-cli:** report cp progress and wait for destination metadata ([#25](https://github.com/opencadc/fsspec-tools/issues/25)) ([9fdba9c](https://github.com/opencadc/fsspec-tools/commit/9fdba9ce35cf7309ac9f6374d29706b607d4e0f0))
+
+
+### Bug Fixes
+
+* **fss-cli:** accept slashless recursive metadata ([69d2782](https://github.com/opencadc/fsspec-tools/commit/69d2782532aa33ed17076cfebaabdce766c60b45))
+* **fss-cli:** drain filesystem hooks before source cleanup ([54fa0e6](https://github.com/opencadc/fsspec-tools/commit/54fa0e6b2e18c67c8f2a4a65250fc0921a57cb7e))
+* **vosfs,fss-cli:** preserve transfer fallbacks ([#27](https://github.com/opencadc/fsspec-tools/issues/27)) ([ac2ef20](https://github.com/opencadc/fsspec-tools/commit/ac2ef2031b4d9134867f080f3ebf6b72f6389be0))
+
+
+### Documentation
+
+* **repo:** share the package site and configure Pages deployment ([ce0e0a6](https://github.com/opencadc/fsspec-tools/commit/ce0e0a60f887b387bf5d4c75fd4d06576b608ff4))
+* **vosfs,fss-cli:** clarify package guides and internal documentation ([2809d38](https://github.com/opencadc/fsspec-tools/commit/2809d38c3ad50569d8faa0e3b95ce599ecbf9b24))
+
+
+### Code Refactoring
+
+* **fss-cli:** rename fsspec-cli to fss-cli ([#19](https://github.com/opencadc/fsspec-tools/issues/19)) ([1346833](https://github.com/opencadc/fsspec-tools/commit/1346833371e38a59bc2f13b4ecd1892393f668ee))
+
+
+### Build System
+
+* **vosfs,fss-cli:** relicense under AGPL-3.0-or-later ([#18](https://github.com/opencadc/fsspec-tools/issues/18)) ([c133a74](https://github.com/opencadc/fsspec-tools/commit/c133a74e23cd9230b9fe2dc30ef80b10c81c8bf7))
+
 ## [0.10.0](https://github.com/shinybrar/vosfs/compare/fsspec-cli-v0.9.0...fsspec-cli-v0.10.0) (2026-10-04)
 
 
