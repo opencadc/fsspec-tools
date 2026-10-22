@@ -61,6 +61,7 @@ def test_release_automation_is_disabled_until_explicitly_enabled() -> None:
     assert "pypi-release" in dispatch["run"]
     assert "docs-publish" not in dispatch["run"]
     correction = next(step for step in job["steps"] if step.get("run") == "python tools/migration_notes.py")
+    assert CONFIG["always-update"] is True
     assert correction["if"] == "steps.release.outputs.prs_created == 'true'"
     assert correction["env"]["RELEASE_PRS"] == "${{ steps.release.outputs.prs }}"
     assert "^libs/(vosfs|fss-cli)$" in dispatch["run"]

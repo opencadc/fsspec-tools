@@ -38,5 +38,6 @@
     }
   },
   "bootstrap-sha": "58673da71cdf49a390c7cf750e4402f6f041ef38",
-  "pull-request-title-pattern": "chore(repo): release${component} ${version}"
+  "pull-request-title-pattern": "chore(repo): release${component} ${version}",
+  "always-update": true
 }

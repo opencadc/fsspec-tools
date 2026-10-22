@@ -2,6 +2,8 @@
 
 import base64
 
+import pytest
+
 from tools import migration_notes
 
 PREFIX = "https://github.com/opencadc/fsspec-tools"
@@ -55,3 +57,32 @@ def test_initial_pr_updates_both_notes_locations_with_a_blob_guard(monkeypatch) 
     calls.clear()
     migration_notes.update_pull_requests([pull], {"libs/vosfs": "0.12.0"}, ORIGINS)
     assert not calls
+
+
+def test_retry_finishes_a_body_correction_after_the_changelog_was_saved(monkeypatch) -> None:
+    text = "# Changelog\n\n## 0.12.0\n" + ENTRY
+    state = {"text": text, "body_attempts": 0, "file_updates": 0}
+
+    def github(_endpoint, **kwargs):
+        if kwargs.get("method") == "PUT":
+            state["text"] = base64.b64decode(kwargs["payload"]["content"]).decode()
+            state["file_updates"] += 1
+        elif kwargs.get("method") == "PATCH":
+            state["body_attempts"] += 1
+            if state["body_attempts"] == 1:
+                msg = "temporary GitHub failure"
+                raise RuntimeError(msg)
+        return {"sha": "blob", "content": base64.b64encode(state["text"].encode()).decode()}
+
+    monkeypatch.setattr(migration_notes, "github", github)
+    pull = {
+        "number": 10,
+        "title": "chore(repo): release vosfs 0.12.0",
+        "headBranchName": "release-branch",
+        "body": ENTRY,
+    }
+    with pytest.raises(RuntimeError, match="temporary GitHub failure"):
+        migration_notes.update_pull_requests([pull], {"libs/vosfs": "0.11.0"}, ORIGINS)
+    migration_notes.update_pull_requests([pull], {"libs/vosfs": "0.11.0"}, ORIGINS)
+    assert state["file_updates"] == 1
+    assert state["body_attempts"] == 2
