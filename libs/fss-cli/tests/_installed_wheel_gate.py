@@ -178,6 +178,24 @@ def _build_artifacts(
     )
     rebuilt_vosfs = _only_artifact(rebuilt_vosfs_dir, "vosfs-*.whl")
     _compare_wheels(vosfs_wheel, rebuilt_vosfs)
+    for package, directory, wheel in (
+        ("fss-cli", cli_dist, cli_wheel),
+        ("vosfs", vosfs_dist, vosfs_wheel),
+    ):
+        _run(
+            [
+                sys.executable,
+                str(_REPOSITORY_ROOT / "tools" / "release.py"),
+                "--dist",
+                str(directory),
+                "--package",
+                package,
+                "--version",
+                wheel.name.split("-")[1],
+            ],
+            cwd=root,
+            environment=environment,
+        )
     return rebuilt_cli, cli_sdist, rebuilt_vosfs
 
 
