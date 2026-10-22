@@ -5,7 +5,9 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
+  issues: write
+  pull-requests: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -14,13 +16,9 @@ concurrency:
 jobs:
   release-please:
     name: Release Please
-    if: github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' && vars.RELEASE_ENABLED == 'true'
+    if: github.repository == 'opencadc/fsspec-tools'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    permissions:
-      contents: write
-      pull-requests: write
-      issues: write
     steps:
       - name: Open release pull requests and cut releases
         id: release
@@ -50,6 +48,7 @@ jobs:
           event-type: pypi-release
           client-payload: |-
             {
+              "package": "vosfs",
               "tag_name": "${{ steps.release.outputs['libs/vosfs--tag_name'] }}",
               "sha": "${{ steps.release.outputs['libs/vosfs--sha'] }}"
             }
@@ -62,6 +61,7 @@ jobs:
           event-type: pypi-release
           client-payload: |-
             {
+              "package": "fss-cli",
               "tag_name": "${{ steps.release.outputs['libs/fss-cli--tag_name'] }}",
               "sha": "${{ steps.release.outputs['libs/fss-cli--sha'] }}"
             }

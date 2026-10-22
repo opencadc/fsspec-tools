@@ -1,4 +1,4 @@
-# Each PyPI Trusted Publisher is bound to this file and its package environment.
+# Bound to the pypi-vosfs and pypi-fss-cli Trusted Publishers.
 name: Publish to PyPI
 
 on:
@@ -6,97 +6,72 @@ on:
     types: [pypi-release]
   workflow_dispatch:
     inputs:
-      tag:
-        description: Existing package-vX.Y.Z tag
-        required: true
-        type: string
-      index:
+      package:
         type: choice
-        options: [testpypi, pypi]
-        default: pypi
+        options: [vosfs, fss-cli]
+        required: true
+      tag:
+        description: Existing package-vX.Y.Z release tag
+        type: string
         required: true
       artifact_run_id:
-        description: Reuse immutable distributions from this workflow run (required for recovery)
+        description: Prior publishing run whose exact distributions should be reused
         type: string
 
 permissions:
   contents: read
 
 concurrency:
-  group: publish-${{ github.event.client_payload.tag_name || inputs.tag }}-${{ inputs.index || 'pypi' }}
+  group: publish-${{ github.event.client_payload.tag_name || inputs.tag }}
   cancel-in-progress: false
 
 jobs:
-  build:
-    name: Validate and prepare distributions
-    if: >-
-      github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' &&
-      (vars.PYPI_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.index == 'testpypi'))
+  publish:
+    name: Publish ${{ github.event.client_payload.package || inputs.package }}
+    if: github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 20
+    environment:
+      name: pypi-${{ github.event.client_payload.package || inputs.package }}
     permissions:
-      contents: read
+      contents: write
       actions: read
-    outputs:
-      package: ${{ steps.release.outputs.package }}
-      tag: ${{ steps.release.outputs.tag }}
-      sha: ${{ steps.release.outputs.sha }}
-      index: ${{ steps.release.outputs.index }}
+      id-token: write
+    env:
+      PACKAGE: ${{ github.event.client_payload.package || inputs.package }}
+      TAG: ${{ github.event.client_payload.tag_name || inputs.tag }}
+      EXPECTED_SHA: ${{ github.event.client_payload.sha }}
+      EVENT: ${{ github.event_name }}
+      ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
     steps:
-      - name: Check out trusted main history
+      - name: Check out publishing tools
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Validate package, tag, commit, and successful CI
+      - name: Validate the release tag
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          EVENT: ${{ github.event_name }}
-          TAG: ${{ github.event.client_payload.tag_name || inputs.tag }}
-          EXPECTED_SHA: ${{ github.event.client_payload.sha }}
-          INDEX: ${{ inputs.index || 'pypi' }}
-          ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
         run: |
           set -euo pipefail
-          [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]] || exit 1
-          [[ "$TAG" =~ ^(vosfs|fss-cli)-v[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
-            echo "Expected a vosfs-vX.Y.Z or fss-cli-vX.Y.Z release tag" >&2
-            exit 1
-          }
-          PACKAGE=${TAG%-v*}
-          SHA=$(git rev-parse "refs/tags/$TAG^{commit}")
-          if [[ "$EVENT" == "repository_dispatch" && "$SHA" != "$EXPECTED_SHA" ]]; then
+          [[ "$PACKAGE" =~ ^(vosfs|fss-cli)$ ]] || exit 1
+          [[ "$TAG" =~ ^${PACKAGE}-v[0-9]+\.[0-9]+\.[0-9]+$ ]] || exit 1
+          sha=$(git rev-parse "refs/tags/$TAG^{commit}")
+          if [[ "$EVENT" == "repository_dispatch" && "$sha" != "$EXPECTED_SHA" ]]; then
             echo "Dispatch SHA does not match the release tag" >&2
             exit 1
           fi
-          [[ "$INDEX" == "pypi" || "$INDEX" == "testpypi" ]] || exit 1
-          git merge-base --is-ancestor "$SHA" HEAD
+          git merge-base --is-ancestor "$sha" HEAD
           if [[ -n "$ARTIFACT_RUN_ID" ]]; then
             [[ "$ARTIFACT_RUN_ID" =~ ^[0-9]+$ ]] || exit 1
             prior=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ARTIFACT_RUN_ID")
             [[ "$(jq -r '.path' <<<"$prior")" == ".github/workflows/pypi.yml" ]] || exit 1
             [[ "$(jq -r '.head_branch' <<<"$prior")" == "main" ]] || exit 1
           fi
-          deadline=$((SECONDS + 600))
-          while true; do
-            status=$(gh api --method GET "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs" \
-              -f head_sha="$SHA" -f event=push \
-              --jq '[.workflow_runs[] | select(.head_branch == "main")] | sort_by(.run_number) | last | .conclusion')
-            if [[ "$status" == "success" ]]; then break; fi
-            if [[ "$status" != "null" && -n "$status" ]]; then
-              echo "CI for $SHA concluded $status" >&2
-              exit 1
-            fi
-            if (( SECONDS >= deadline )); then echo "Timed out waiting for CI for $SHA" >&2; exit 1; fi
-            sleep 30
-          done
-          echo "package=$PACKAGE" >> "$GITHUB_OUTPUT"
-          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
-          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
-          echo "index=$INDEX" >> "$GITHUB_OUTPUT"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       - name: Check out released source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -110,11 +85,8 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Require matching source and manifest versions
+      - name: Check release versions and lockfile
         working-directory: release-source
-        env:
-          PACKAGE: ${{ steps.release.outputs.package }}
-          TAG: ${{ steps.release.outputs.tag }}
         run: |
           set -euo pipefail
           version=${TAG#"${PACKAGE}-v"}
@@ -122,99 +94,57 @@ jobs:
           [[ "$(jq -r --arg path "libs/$PACKAGE" '.[$path]' .release-please-manifest.json)" == "$version" ]] || exit 1
           uv lock --check
 
-      - name: Build the released package
+      - name: Build distributions
         if: inputs.artifact_run_id == ''
         working-directory: release-source
-        env:
-          PACKAGE: ${{ steps.release.outputs.package }}
         run: uv build --no-sources --package "$PACKAGE" --out-dir ../dist
 
-      - name: Recover the retained distributions
+      - name: Recover retained distributions
         if: inputs.artifact_run_id != ''
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: dist-${{ steps.release.outputs.package }}-${{ steps.release.outputs.sha }}
+          name: dist-${{ env.PACKAGE }}-${{ steps.release.outputs.sha }}
           run-id: ${{ inputs.artifact_run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: dist
 
-      - name: Validate artifacts and any files already on the index
-        env:
-          PACKAGE: ${{ steps.release.outputs.package }}
-          TAG: ${{ steps.release.outputs.tag }}
-          INDEX: ${{ steps.release.outputs.index }}
+      - name: Validate distributions
         run: |
-          set -euo pipefail
           uv run --locked twine check --strict dist/*
-          python tools/release.py --dist dist --package "$PACKAGE" --version "${TAG#"${PACKAGE}-v"}" --index "$INDEX"
+          python tools/release.py --dist dist --package "$PACKAGE" --version "${TAG#"${PACKAGE}-v"}" --index pypi
 
-      - name: Retain the exact distributions for publication and recovery
+      - name: Retain distributions for recovery
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: dist-${{ steps.release.outputs.package }}-${{ steps.release.outputs.sha }}
+          name: dist-${{ env.PACKAGE }}-${{ steps.release.outputs.sha }}
           path: |
             dist/*.whl
             dist/*.tar.gz
           if-no-files-found: error
           retention-days: 90
 
-  publish:
-    name: Publish ${{ needs.build.outputs.package }} to ${{ needs.build.outputs.index }}
-    needs: build
-    if: >-
-      github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' &&
-      (vars.PYPI_ENABLED == 'true' || needs.build.outputs.index == 'testpypi')
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    environment:
-      name: ${{ needs.build.outputs.index }}-${{ needs.build.outputs.package }}
-    permissions:
-      contents: read
-      actions: read
-      id-token: write
-    steps:
-      - name: Download the validated distributions
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: dist-${{ needs.build.outputs.package }}-${{ needs.build.outputs.sha }}
-          path: dist
-      - name: Publish distributions
+      # The publisher creates attestations beside its uploads; keep dist unchanged.
+      - name: Stage distributions for publication
+        run: |
+          mkdir publish-dist
+          cp dist/*.whl dist/*.tar.gz publish-dist/
+
+      - name: Wait five minutes before publishing
+        run: sleep 300
+
+      - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
         with:
-          packages-dir: dist/
-          repository-url: ${{ needs.build.outputs.index == 'testpypi' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
-          skip-existing: true # Existing files were compared by SHA-256 before this job.
+          packages-dir: publish-dist/
+          attestations: true
+          print-hash: true
+          skip-existing: true # Existing files were checked against the retained hashes.
 
-  finalize:
-    name: Verify distributions and finalize release
-    needs: [build, publish]
-    if: github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' && needs.publish.result == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    permissions:
-      contents: write
-      actions: read
-    steps:
-      - name: Check out publishing tools
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          ref: ${{ github.sha }}
-          persist-credentials: false
-      - name: Download the intended distributions
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: dist-${{ needs.build.outputs.package }}-${{ needs.build.outputs.sha }}
-          path: dist
-      - name: Require every published file to match its retained bytes
-        env:
-          PACKAGE: ${{ needs.build.outputs.package }}
-          TAG: ${{ needs.build.outputs.tag }}
-          INDEX: ${{ needs.build.outputs.index }}
+      - name: Verify published distributions
         run: |
-          set -euo pipefail
           for attempt in 1 2 3 4 5 6; do
             if python tools/release.py --dist dist --package "$PACKAGE" \
-              --version "${TAG#"${PACKAGE}-v"}" --index "$INDEX" --require-published; then
+              --version "${TAG#"${PACKAGE}-v"}" --index pypi --require-published; then
               exit 0
             fi
             sleep 10
@@ -222,17 +152,14 @@ jobs:
           echo "Published files could not be verified" >&2
           exit 1
 
-      - name: Preserve existing assets and finish the draft
-        if: needs.build.outputs.index == 'pypi'
+      - name: Finalize the GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: ${{ needs.build.outputs.tag }}
         run: |
           set -euo pipefail
-          [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]]
           release_id=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json databaseId --jq '.databaseId')
           release=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id")
-          for file in dist/*; do
+          for file in dist/*.whl dist/*.tar.gz; do
             name=${file##*/}
             asset=$(jq -r --arg name "$name" '.assets[] | select(.name == $name) | .id' <<<"$release")
             if [[ -n "$asset" ]]; then

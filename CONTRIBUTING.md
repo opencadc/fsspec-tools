@@ -48,8 +48,13 @@ and exercises isolated installs outside the checkout. Ordinary pytest runs skip
 those distribution-only tests intentionally; run the gate to exercise them.
 
 If a hook changes files, review and stage those changes, then rerun it. Never use
-`--no-verify`. CI's `Required` job waits for quality, both package test matrices,
-and the installed-artifact gate. A package-test failure must block merging.
+`--no-verify`. The always-running **Quality** workflow provides the `Required`
+check for repository quality and PR titles. Separate workflows use GitHub `paths`
+filters: vosfs tests run for `libs/vosfs/**` changes, and fss-cli tests plus the
+installed-artifact gate run for `libs/fss-cli/**` changes. Root-only and shared-file
+changes do not trigger package tests; the complete local gate above still applies.
+Review every package workflow triggered by your change before merging. Path-filtered
+workflows are not globally required checks, because unrelated PRs skip them.
 
 ## Commits and pull requests
 

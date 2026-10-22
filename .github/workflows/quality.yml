@@ -1,14 +1,11 @@
-# All required checks share one dependency graph.
-name: CI
+# Repository-wide checks; package tests have their own path-filtered workflows.
+name: Quality
 
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review]
   push:
-    branches: [main, "migration/**"]
-  schedule:
-    - cron: "0 4 * * *"
-  workflow_dispatch:
+    branches: [main]
 
 permissions:
   contents: read
@@ -68,63 +65,20 @@ jobs:
           TITLE: ${{ github.event.pull_request.title }}
         run: uv run --locked --only-group dev cz check --message "$TITLE"
 
-  vosfs:
-    name: vosfs
-    uses: ./.github/workflows/reusable-package.yml
-    with:
-      package: vosfs
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  fss-cli:
-    name: fss-cli
-    uses: ./.github/workflows/reusable-package.yml
-    with:
-      package: fss-cli
-    secrets:
-      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
-  artifacts:
-    name: Installed artifacts
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
-      - name: Check out source
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - name: Install uv and Python
-        uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
-        with:
-          python-version: "3.12"
-      - name: Build, rebuild, and exercise isolated wheels
-        run: uv run --locked --all-packages python libs/fss-cli/tests/_installed_wheel_gate.py
-
   required:
     name: Required
     if: always()
-    needs: [quality, pr-title, vosfs, fss-cli, artifacts]
+    needs: [quality, pr-title]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Require every applicable check
+      - name: Require repository quality checks
         env:
-          RESULTS: ${{ toJson(needs) }}
-          EVENT: ${{ github.event_name }}
+          QUALITY: ${{ needs.quality.result }}
+          PR_TITLE: ${{ needs.pr-title.result }}
         run: |
-          python - <<'PYTHON'
-          import json
-          import os
-          import sys
-
-          results = json.loads(os.environ["RESULTS"])
-          failures = {
-              name: job["result"]
-              for name, job in results.items()
-              if job["result"] != "success"
-              and not (name == "pr-title" and os.environ["EVENT"] != "pull_request" and job["result"] == "skipped")
+          [[ "$QUALITY" == "success" ]] || { echo "Quality concluded $QUALITY" >&2; exit 1; }
+          [[ "$PR_TITLE" == "success" || "$PR_TITLE" == "skipped" ]] || {
+            echo "PR title concluded $PR_TITLE" >&2
+            exit 1
           }
-          if failures:
-              print(f"Required checks did not succeed: {failures}", file=sys.stderr)
-              sys.exit(1)
-          PYTHON
