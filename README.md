@@ -25,9 +25,10 @@ uv run --locked --all-packages zensical build --strict --clean
 
 [CONTRIBUTING.md](CONTRIBUTING.md) documents the complete local validation gate.
 CI tests Python 3.10–3.14 on Linux and Python 3.12 on macOS. The protected
-`Required` check includes quality, both package suites, and isolated distribution
-tests. Live VOSpace integration tests require separate credentials and are not
-part of the offline CI gate.
+`Required` check covers repository quality and PR titles. Separate package
+workflows run only when files under `libs/vosfs/` or `libs/fss-cli/` change;
+the fss-cli workflow also checks isolated distributions. Live VOSpace integration
+tests require separate credentials and are not part of these offline checks.
 
 ## Project history
 

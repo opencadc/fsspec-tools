@@ -1,0 +1,27 @@
+name: vosfs
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "libs/vosfs/**"
+  push:
+    branches: [main]
+    paths:
+      - "libs/vosfs/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vosfs-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    name: Tests
+    uses: ./.github/workflows/reusable-package.yml
+    with:
+      package: vosfs
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
