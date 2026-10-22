@@ -1,56 +1,41 @@
-# vostools
+# fsspec-tools
 
-Python tools for [VOSpace](https://www.ivoa.net/documents/VOSpace/), primarily the CADC / CANFAR services. The repository is a [uv](https://docs.astral.sh/uv/) workspace with three packages under `libs/`.
+Two Python libraries for working with [fsspec](https://filesystem-spec.readthedocs.io/)
+filesystems, maintained in one [uv](https://docs.astral.sh/uv/) workspace.
 
-| Package | What it is | Docs |
+| Package | Purpose | Documentation |
 | --- | --- | --- |
-| [`vos`](libs/vos/) | Client library and the `vcp`, `vls`, `vsync`, … commands | [libs/vos/README.md](libs/vos/README.md) |
-| [`vosfs`](libs/vosfs/) | Async fsspec filesystem for OpenCADC VOSpace | [User guide](libs/vosfs/docs/user/index.md) |
-| [`fss-cli`](libs/fss-cli/) | Library-only POSIX-shaped commands for async fsspec filesystems | [CLI guide](libs/vosfs/docs/user/cli/index.md) |
+| [`vosfs`](libs/vosfs/) | An asynchronous fsspec filesystem for OpenCADC VOSpace | [User guide](https://opencadc.github.io/fsspec-tools/guide/) |
+| [`fss-cli`](libs/fss-cli/) | POSIX-shaped commands you embed in a Typer application, using your own filesystem instances | [Integration guide](https://opencadc.github.io/fsspec-tools/cli/integration/) |
 
-Architecture decisions are in [`docs/adr/`](docs/adr/). [CONTRIBUTING.md](CONTRIBUTING.md) is the full local gate.
+The distributions are `vosfs` and `fss-cli`; their Python imports are `vosfs`
+and `fss_cli`. Each package has its own version, changelog, and releases.
+The workspace root is not a distribution, and fss-cli does not install a
+standalone command.
 
-## Set up
+## Develop
 
 ```bash
 uv sync --locked --all-packages
-uv run pre-commit install --install-hooks --hook-type pre-commit --hook-type commit-msg
+uv run --all-packages pre-commit install --install-hooks --hook-type pre-commit --hook-type commit-msg
+uv run --locked --package vosfs pytest libs/vosfs/tests
+uv run --locked --package fss-cli pytest libs/fss-cli/tests
+uv run --locked --all-packages zensical build --strict --clean
 ```
 
-## Test
+[CONTRIBUTING.md](CONTRIBUTING.md) documents the complete local validation gate.
+CI tests Python 3.10–3.14 on Linux and Python 3.12 on macOS. The protected
+`Required` check includes quality, both package suites, and isolated distribution
+tests. Live VOSpace integration tests require separate credentials and are not
+part of the offline CI gate.
 
-```bash
-uv run --package vos pytest libs/vos/tests
-uv run --package vosfs pytest libs/vosfs/tests
-uv run --package fss-cli pytest libs/fss-cli/tests
-```
+## Project history
 
-`uv run --package vos -p 3.14 pytest libs/vos/tests` uses a specific Python (uv downloads it if needed). The vos live tests need CADC credentials and are not collected by default:
+The packages originated in `shinybrar/vosfs`, then joined the `shinybrar/vostools`
+workspace before moving here. Their original history and release tags are
+preserved, along with relevant side branches and PR head refs under `archive/`.
+The legacy Python vos package and its ancestry are excluded.
 
-```bash
-uv run --package vos pytest libs/vos/tests/integration
-```
-
-## Documentation
-
-The vosfs and fss-cli user documentation is one Zensical site:
-
-```bash
-uv run --all-packages zensical build --strict --clean
-```
-
-## Lint, types, and commits
-
-The root `pyproject.toml` holds the shared ruff, ty, and commitizen configuration. `libs/vos` extends it with a narrower rule set until it matches that policy.
-
-```bash
-uv run pre-commit run --all-files
-```
-
-Commit messages and pull request titles are [Conventional Commits](https://www.conventionalcommits.org/) with scopes `vos`, `vosfs`, `fss-cli`, or `repo`, for example `fix(vos): handle missing node properties`.
-
-## Continuous integration
-
-`quality.yml` always runs the hooks, repository contract tests, a strict Zensical build, package builds, and distribution metadata checks. Its `Required` job is the only check branch protection needs.
-
-Each package has a path-filtered workflow (`ci-vos.yml`, `ci-vosfs.yml`, `ci-fss-cli.yml`) that runs when that package's tree or a shared workspace file changes. `ci-fss-cli.yml` also watches `libs/vosfs/**` because fss-cli's tests depend on vosfs. Those workflows test Python 3.10–3.14 on Linux and 3.12 on macOS.
+See the [migration record](docs/migration/README.md) for the verified commit/ref
+maps and the [release guide](docs/releases.md) for publishing and recovery.
+Architecture decisions are recorded in [docs/adr/](docs/adr/).

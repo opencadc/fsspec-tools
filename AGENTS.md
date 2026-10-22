@@ -1,32 +1,20 @@
-# Agent skills
+# Working in fsspec-tools
 
-## Issue tracker
+This is a uv workspace containing `vosfs` (`libs/vosfs`) and `fss-cli`
+(`libs/fss-cli`). Both are Python libraries. The root is not published.
 
-Issues are tracked in GitHub; external PRs are not a triage surface. See `docs/agents/issue-tracker.md`.
+- Work on a branch and use conventional commit messages.
+- Use `uv sync --locked --all-packages` to install the workspace and tools.
+  CI runs hooks with `uv run --locked --all-packages`.
+- Run the complete local validation gate in `CONTRIBUTING.md` before opening
+  or updating a PR. Never bypass hooks with `--no-verify`.
+- Tests are deterministic and offline. Do not supply CADC credentials to CI.
+- Shared user documentation is in `docs/user/`; build it with
+  `uv run --locked --all-packages zensical build --strict --clean`.
+- Do not commit generated `site/`, `dist/`, or environment files.
+- Preserve the original historical tags and `archive/` refs. The migration PR
+  must be merged with a merge commit to retain its imported ancestry.
 
-## Triage labels
-
-Uses `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
-
-## Domain docs
-
-See `docs/agents/domain.md`.
-
-## Cursor Cloud specific instructions
-
-This repo is a `uv` workspace with three library packages under `libs/`: `vos`
-(`libs/vos`), `vosfs` (`libs/vosfs`) and `fss-cli` (`libs/fss-cli`). There
-are no long-running services, servers, or databases; "running" the products
-means exercising the libraries and the `vcp`/`vls`/... commands from `vos`.
-
-- Sync with `uv sync --locked --all-packages`. Plain `uv sync --locked` installs
-  only the root tooling, which makes the `ty` hook fail with unresolved imports.
-  CI runs hooks via `uv run --all-packages`.
-- The full local validation gate (lint/format/type/test/docs/build) is documented
-  in `CONTRIBUTING.md`; run those exact commands rather than re-deriving them.
-- Offline tests (`uv run --package <package> pytest libs/<dir>/tests`) are
-  deterministic and need no network or credentials. The vos tests under
-  `libs/vos/tests/integration` need CADC credentials and are not collected by
-  default.
-- `uv run --all-packages zensical build --strict --clean` builds docs to
-  `site/`; do not commit `site/` or `dist/` (both are gitignored).
+Read `libs/vosfs/docs/CONTEXT.md` for domain terminology and relevant decisions
+under `docs/adr/`. Issue handling is documented in `docs/agents/issue-tracker.md`
+and `docs/agents/triage-labels.md`.

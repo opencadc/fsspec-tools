@@ -32,11 +32,11 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/opencadc/vostools"
-Documentation = "https://opencadc.github.io/vostools/"
-Repository = "https://github.com/opencadc/vostools"
-Issues = "https://github.com/opencadc/vostools/issues"
-Changelog = "https://github.com/opencadc/vostools/blob/main/libs/vosfs/CHANGELOG.md"
+Homepage = "https://github.com/opencadc/fsspec-tools"
+Documentation = "https://opencadc.github.io/fsspec-tools/"
+Repository = "https://github.com/opencadc/fsspec-tools"
+Issues = "https://github.com/opencadc/fsspec-tools/issues"
+Changelog = "https://github.com/opencadc/fsspec-tools/blob/main/libs/vosfs/CHANGELOG.md"
 
 [project.entry-points."fsspec.specs"]
 vos = "vosfs:VOSpaceFileSystem"
