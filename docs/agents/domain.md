@@ -19,7 +19,6 @@ Repository-wide decisions live at the root; a package's glossary lives with the 
 │   ├── 0001-example-decision.md
 │   └── 0002-another-decision.md
 └── libs/
-    ├── vos/
     ├── vosfs/docs/CONTEXT.md
     └── fss-cli/
 ```

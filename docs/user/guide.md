@@ -19,7 +19,7 @@ base URL. No registry or shortname lookup is performed.
 Install `vosfs` first:
 
 ```bash
-uv add "git+https://github.com/opencadc/vostools@main#subdirectory=libs/vosfs"
+uv add "git+https://github.com/opencadc/fsspec-tools@main#subdirectory=libs/vosfs"
 ```
 
 ```python
@@ -279,7 +279,7 @@ Every public behavior carries exactly one classification.
 
     The tables below are a reader-friendly digest. The full, authoritative
     capability matrix lives in the
-    [capability contract](https://github.com/opencadc/vostools/blob/main/libs/vosfs/docs/design/trd.md);
+    [capability contract](https://github.com/opencadc/fsspec-tools/blob/main/libs/vosfs/docs/design/trd.md);
     where the two differ, the contract wins.
 
 ### Supported

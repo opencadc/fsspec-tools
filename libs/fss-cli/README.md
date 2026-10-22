@@ -1,6 +1,6 @@
 # fss-cli
 
-[![CI](https://github.com/opencadc/vostools/actions/workflows/quality.yml/badge.svg)](https://github.com/opencadc/vostools/actions/workflows/quality.yml)
+[![CI](https://github.com/opencadc/fsspec-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/opencadc/fsspec-tools/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue)](LICENSE)
 
@@ -15,7 +15,7 @@ Releases up to 0.10.0 were named `fsspec-cli`, imported as `fsspec_cli`. See
 ## Install
 
 ```bash
-uv add "git+https://github.com/opencadc/vostools@main#subdirectory=libs/fss-cli"
+uv add "git+https://github.com/opencadc/fsspec-tools@main#subdirectory=libs/fss-cli"
 ```
 
 ## Quickstart
@@ -51,7 +51,7 @@ python app.py fs cp local:/results.csv archive:/2026/results.csv
 
 `memory` keeps the example runnable with no setup; a real host maps the
 filesystems it serves. See the
-[Overview](https://opencadc.github.io/vostools/cli/) for the same app wired to
+[Overview](https://opencadc.github.io/fsspec-tools/cli/) for the same app wired to
 local disk plus a remote VOSpace archive.
 
 ## Commands
@@ -75,10 +75,10 @@ App({"data": data_source}, capabilities={"recursion": {"remove": True}})
 
 | For | Read |
 | --- | --- |
-| Embedding it: sources, lifecycle, capabilities, exit statuses | [Integration guide](https://opencadc.github.io/vostools/cli/integration/) |
-| What each command does | [Command reference](https://opencadc.github.io/vostools/cli/commands/) |
-| The public API | [API reference](https://opencadc.github.io/vostools/cli/api-reference/) |
-| The normative contract and its rationale | [`docs/design/fss-cli/`](../vosfs/docs/design/fss-cli/) |
+| Embedding it: sources, lifecycle, capabilities, exit statuses | [Integration guide](https://opencadc.github.io/fsspec-tools/cli/integration/) |
+| What each command does | [Command reference](https://opencadc.github.io/fsspec-tools/cli/commands/) |
+| The public API | [API reference](https://opencadc.github.io/fsspec-tools/cli/api-reference/) |
+| The normative contract and its rationale | [`docs/design/fss-cli/`](docs/design/) |
 | Architecture decisions | [`docs/adr/`](../../docs/adr/) |
 
 ## Scope

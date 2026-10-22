@@ -1,4 +1,13 @@
-# vosfs
+# fsspec-tools
+
+Two libraries for using fsspec filesystems from Python and from your own CLI.
+
+- **vosfs** connects fsspec-aware applications to OpenCADC VOSpace.
+- **fss-cli** supplies POSIX-shaped commands for a Typer application, using the
+  filesystem instances your application provides. See the
+  [CLI integration guide](cli/integration.md).
+
+## The VOSpace filesystem
 
 `vosfs` is an asynchronous [`fsspec`](https://filesystem-spec.readthedocs.io/)
 filesystem for the OpenCADC Cavern VOSpace service. It registers the `vos`
@@ -12,7 +21,7 @@ IVOA VOSpace 2.1 conformance.
 ## Install
 
 ```bash
-uv add "git+https://github.com/opencadc/vostools@main#subdirectory=libs/vosfs"
+uv add "git+https://github.com/opencadc/fsspec-tools@main#subdirectory=libs/vosfs"
 ```
 
 ## Authenticated quickstart
@@ -54,7 +63,7 @@ finally:
 - [fss-cli](cli/index.md) turns this (or any async fsspec filesystem) into
   shell-shaped commands inside your own CLI.
 - The normative surface is the capability contract in
-  [`libs/vosfs/docs/design/trd.md`](https://github.com/opencadc/vostools/blob/main/libs/vosfs/docs/design/trd.md).
+  [`libs/vosfs/docs/design/trd.md`](https://github.com/opencadc/fsspec-tools/blob/main/libs/vosfs/docs/design/trd.md).
 
 To contribute, follow the
-[contributor guide](https://github.com/opencadc/vostools/blob/main/CONTRIBUTING.md).
+[contributor guide](https://github.com/opencadc/fsspec-tools/blob/main/CONTRIBUTING.md).

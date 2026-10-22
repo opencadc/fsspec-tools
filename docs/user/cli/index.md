@@ -17,7 +17,7 @@ them yourself.
 ## Install
 
 ```bash
-uv add "git+https://github.com/opencadc/vostools@main#subdirectory=libs/fss-cli"
+uv add "git+https://github.com/opencadc/fsspec-tools@main#subdirectory=libs/fss-cli"
 ```
 
 ## The whole idea in one example
@@ -147,4 +147,4 @@ rest rather than inventing values.
 
 Supported host platforms are Linux and macOS. The commands and source forms
 with test evidence behind them are listed in the
-[tested command matrix](https://github.com/opencadc/vostools/blob/main/libs/vosfs/docs/design/fss-cli/matrix.md).
+[tested command matrix](https://github.com/opencadc/fsspec-tools/blob/main/libs/fss-cli/docs/design/matrix.md).

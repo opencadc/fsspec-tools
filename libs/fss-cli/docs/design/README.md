@@ -13,8 +13,8 @@ host embeds in its own CLI.
 | [`lessons.md`](lessons.md) | The findings that cost real investigation, stated independently of any one command. | Before changing a rule that looks arbitrary — it probably isn't. |
 | [`matrix.md`](matrix.md) | Which command and source-form combinations have qualifying evidence. | You are making a compatibility claim or cutting a release. |
 
-Architecture decisions live in [`../../adr/`](../../../../../docs/adr/). The `vosfs` backend
-is governed by its own separate contract, [`../trd.md`](../trd.md).
+Architecture decisions live in [`../../adr/`](../../../../docs/adr/). The `vosfs` backend
+is governed by its own separate contract, [`../trd.md`](../../../vosfs/docs/design/trd.md).
 
 ## Reading order
 

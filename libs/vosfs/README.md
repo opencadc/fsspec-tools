@@ -1,6 +1,6 @@
 # vosfs
 
-[![CI](https://github.com/opencadc/vostools/actions/workflows/quality.yml/badge.svg)](https://github.com/opencadc/vostools/actions/workflows/quality.yml)
+[![CI](https://github.com/opencadc/fsspec-tools/actions/workflows/ci.yml/badge.svg)](https://github.com/opencadc/fsspec-tools/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue)](LICENSE)
 
@@ -15,7 +15,7 @@ unsupported.
 ## Install
 
 ```bash
-uv add "git+https://github.com/opencadc/vostools@main#subdirectory=libs/vosfs"
+uv add "git+https://github.com/opencadc/fsspec-tools@main#subdirectory=libs/vosfs"
 ```
 
 ## Quickstart
@@ -57,13 +57,13 @@ capability matrix — is the capability contract in
 
 ## Documentation
 
-The [vosfs documentation](https://opencadc.github.io/vostools/) contains the User
-Guide, task-first [recipes](docs/user/recipes.md), symptom-keyed
-[troubleshooting](docs/user/troubleshooting.md), the public API reference, and
-the [`fss-cli`](docs/user/cli/index.md) integration guide.
+The [vosfs documentation](https://opencadc.github.io/fsspec-tools/) contains the User
+Guide, task-first [recipes](../../docs/user/recipes.md), symptom-keyed
+[troubleshooting](../../docs/user/troubleshooting.md), the public API reference, and
+the [`fss-cli`](../../docs/user/cli/index.md) integration guide.
 
 The design contract for `fss-cli` lives in
-[`docs/design/fss-cli/`](docs/design/fss-cli/) and the architecture
+[`docs/design/fss-cli/`](../fss-cli/docs/design/) and the architecture
 decisions in [`docs/adr/`](../../docs/adr/).
 
 See [CONTRIBUTING.md](../../CONTRIBUTING.md) to work on the project. Public

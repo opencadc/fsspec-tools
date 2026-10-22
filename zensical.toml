@@ -1,11 +1,11 @@
 [project]
-site_name = "vosfs"
-site_description = "Public documentation for the vosfs Python package."
-site_author = "vosfs contributors"
-site_url = "https://opencadc.github.io/vostools/"
-docs_dir = "libs/vosfs/docs/user"
+site_name = "fsspec-tools"
+site_description = "Documentation for the vosfs and fss-cli Python libraries."
+site_author = "fsspec-tools contributors"
+site_url = "https://opencadc.github.io/fsspec-tools/"
+docs_dir = "docs/user"
 site_dir = "site"
-repo_url = "https://github.com/opencadc/vostools"
+repo_url = "https://github.com/opencadc/fsspec-tools"
 nav = [
     { "Home" = "index.md" },
     { "User Guide" = "guide.md" },
@@ -18,16 +18,13 @@ nav = [
         { "Command Reference" = "cli/commands.md" },
         { "API Reference" = "cli/api-reference.md" },
     ] },
-    { "Releases" = "https://github.com/opencadc/vostools/releases" },
-    { "Contributing" = "https://github.com/opencadc/vostools/blob/main/CONTRIBUTING.md" },
+    { "Releases" = "https://github.com/opencadc/fsspec-tools/releases" },
+    { "Contributing" = "https://github.com/opencadc/fsspec-tools/blob/main/CONTRIBUTING.md" },
 ]
 
 [project.theme]
 variant = "modern"
 language = "en"
-
-[project.extra.version]
-provider = "mike"
 
 [project.plugins.mkdocstrings.handlers.python]
 paths = ["libs/vosfs/src", "libs/fss-cli/src"]
