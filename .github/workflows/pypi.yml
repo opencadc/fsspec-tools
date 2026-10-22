@@ -1,0 +1,252 @@
+# Each PyPI Trusted Publisher is bound to this file and its package environment.
+name: Publish to PyPI
+
+on:
+  repository_dispatch:
+    types: [pypi-release]
+  workflow_dispatch:
+    inputs:
+      package:
+        type: choice
+        options: [vosfs, fss-cli]
+        required: true
+      tag:
+        description: Existing package-vX.Y.Z tag
+        required: true
+        type: string
+      sha:
+        description: Full commit SHA named by the tag
+        required: true
+        type: string
+      index:
+        type: choice
+        options: [testpypi, pypi]
+        default: testpypi
+        required: true
+      artifact_run_id:
+        description: Reuse immutable distributions from this workflow run (required for recovery)
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.event.client_payload.tag_name || inputs.tag }}-${{ inputs.index || 'pypi' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Validate and prepare distributions
+    if: >-
+      github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' &&
+      (vars.PYPI_ENABLED == 'true' || (github.event_name == 'workflow_dispatch' && inputs.index == 'testpypi'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      package: ${{ steps.release.outputs.package }}
+      tag: ${{ steps.release.outputs.tag }}
+      sha: ${{ steps.release.outputs.sha }}
+      index: ${{ steps.release.outputs.index }}
+    steps:
+      - name: Check out trusted main history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate package, tag, commit, and successful CI
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE: ${{ github.event.client_payload.package || inputs.package }}
+          PACKAGE_PATH: ${{ github.event.client_payload.path || format('libs/{0}', inputs.package) }}
+          TAG: ${{ github.event.client_payload.tag_name || inputs.tag }}
+          SHA: ${{ github.event.client_payload.sha || inputs.sha }}
+          INDEX: ${{ inputs.index || 'pypi' }}
+          ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]]
+          [[ "$PACKAGE" =~ ^(vosfs|fss-cli)$ && "$PACKAGE_PATH" == "libs/$PACKAGE" ]]
+          [[ "$TAG" =~ ^${PACKAGE}-v[0-9]+\.[0-9]+\.[0-9]+$ && "$SHA" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$INDEX" == "pypi" || "$INDEX" == "testpypi" ]]
+          [[ "$(git rev-parse "refs/tags/$TAG^{commit}")" == "$SHA" ]]
+          git merge-base --is-ancestor "$SHA" origin/main
+          if [[ -n "$ARTIFACT_RUN_ID" ]]; then
+            [[ "$ARTIFACT_RUN_ID" =~ ^[0-9]+$ ]]
+            prior=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ARTIFACT_RUN_ID")
+            [[ "$(jq -r '.path' <<<"$prior")" == ".github/workflows/pypi.yml" ]]
+            [[ "$(jq -r '.head_branch' <<<"$prior")" == "main" ]]
+          fi
+          deadline=$((SECONDS + 600))
+          while true; do
+            status=$(gh api --method GET "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs" \
+              -f head_sha="$SHA" -f event=push \
+              --jq '[.workflow_runs[] | select(.head_branch == "main")] | sort_by(.run_number) | last | .conclusion')
+            if [[ "$status" == "success" ]]; then break; fi
+            if [[ "$status" != "null" && -n "$status" ]]; then
+              echo "CI for $SHA concluded $status" >&2
+              exit 1
+            fi
+            if (( SECONDS >= deadline )); then echo "Timed out waiting for CI for $SHA" >&2; exit 1; fi
+            sleep 30
+          done
+          git checkout --detach "$SHA"
+          echo "package=$PACKAGE" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "index=$INDEX" >> "$GITHUB_OUTPUT"
+
+      - name: Install uv and Python
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+        with:
+          python-version: "3.12"
+
+      - name: Require matching source and manifest versions
+        env:
+          PACKAGE: ${{ steps.release.outputs.package }}
+          TAG: ${{ steps.release.outputs.tag }}
+        run: |
+          set -euo pipefail
+          version=${TAG#"${PACKAGE}-v"}
+          [[ "$(uv version --package "$PACKAGE" --short)" == "$version" ]]
+          [[ "$(jq -r --arg path "libs/$PACKAGE" '.[$path]' .release-please-manifest.json)" == "$version" ]]
+          uv lock --check
+
+      - name: Build the released package
+        if: inputs.artifact_run_id == ''
+        env:
+          PACKAGE: ${{ steps.release.outputs.package }}
+        run: uv build --no-sources --package "$PACKAGE" --out-dir dist
+
+      - name: Recover the retained distributions
+        if: inputs.artifact_run_id != ''
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dist-${{ steps.release.outputs.package }}-${{ steps.release.outputs.sha }}
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist
+
+      - name: Validate artifacts and any files already on the index
+        env:
+          PACKAGE: ${{ steps.release.outputs.package }}
+          TAG: ${{ steps.release.outputs.tag }}
+          INDEX: ${{ steps.release.outputs.index }}
+        run: |
+          set -euo pipefail
+          uv run --locked twine check --strict dist/*
+          python tools/release.py --dist dist --package "$PACKAGE" --version "${TAG#"${PACKAGE}-v"}" --index "$INDEX"
+
+      - name: Retain the exact distributions for publication and recovery
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: dist-${{ steps.release.outputs.package }}-${{ steps.release.outputs.sha }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 90
+
+  publish:
+    name: Publish ${{ needs.build.outputs.package }} to ${{ needs.build.outputs.index }}
+    needs: build
+    if: >-
+      github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' &&
+      (vars.PYPI_ENABLED == 'true' || needs.build.outputs.index == 'testpypi')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: ${{ needs.build.outputs.index }}-${{ needs.build.outputs.package }}
+    permissions:
+      contents: read
+      actions: read
+      id-token: write
+    steps:
+      - name: Download the validated distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dist-${{ needs.build.outputs.package }}-${{ needs.build.outputs.sha }}
+          path: dist
+      - name: Publish distributions
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist/
+          repository-url: ${{ needs.build.outputs.index == 'testpypi' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
+          skip-existing: true # Existing files were compared by SHA-256 before this job.
+
+  verify:
+    name: Verify published distributions
+    needs: [build, publish]
+    if: github.repository == 'opencadc/fsspec-tools' && needs.publish.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      actions: read
+    steps:
+      - name: Check out the verified release
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ needs.build.outputs.sha }}
+          persist-credentials: false
+      - name: Download the intended distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dist-${{ needs.build.outputs.package }}-${{ needs.build.outputs.sha }}
+          path: dist
+      - name: Require every published file to match its retained bytes
+        env:
+          PACKAGE: ${{ needs.build.outputs.package }}
+          TAG: ${{ needs.build.outputs.tag }}
+          INDEX: ${{ needs.build.outputs.index }}
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6; do
+            if python tools/release.py --dist dist --package "$PACKAGE" \
+              --version "${TAG#"${PACKAGE}-v"}" --index "$INDEX" --require-published; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "Published files could not be verified" >&2
+          exit 1
+
+  github-release:
+    name: Finalize the GitHub release
+    needs: [build, verify]
+    if: github.repository == 'opencadc/fsspec-tools' && needs.build.outputs.index == 'pypi' && needs.verify.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Download distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: dist-${{ needs.build.outputs.package }}-${{ needs.build.outputs.sha }}
+          path: dist
+      - name: Preserve existing assets and finish the draft
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]]
+          release=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG")
+          for file in dist/*; do
+            name=${file##*/}
+            asset=$(jq -r --arg name "$name" '.assets[] | select(.name == $name) | .id' <<<"$release")
+            if [[ -n "$asset" ]]; then
+              expected=$(sha256sum "$file" | cut -d ' ' -f 1)
+              actual=$(gh api "repos/$GITHUB_REPOSITORY/releases/assets/$asset" \
+                -H 'Accept: application/octet-stream' | sha256sum | cut -d ' ' -f 1)
+              [[ "$expected" == "$actual" ]] || { echo "Conflicting release asset $name" >&2; exit 1; }
+            else
+              gh release upload "$TAG" "$file" --repo "$GITHUB_REPOSITORY"
+            fi
+          done
+          gh release edit "$TAG" --draft=false --repo "$GITHUB_REPOSITORY"

@@ -64,7 +64,7 @@ convention = "google"
 docstring-code-format = true
 
 [tool.ty.src]
-include = ["libs/*/src"]
+include = ["libs/*/src", "tools"]
 
 [tool.ty.terminal]
 error-on-warning = false
