@@ -61,6 +61,9 @@ startup error, not a runtime surprise.
 - Sources are released in reverse order. Every exit runs even if an earlier one
   raises.
 - Acquisition, command body, and release all happen on the same event loop.
+- On cancellation, a command waits for its started filesystem operations to
+  finish before releasing sources. This includes workers used to adapt a
+  synchronous filesystem. Cancellation prevents later operations from starting.
 - A source-exit failure produces a nonzero status **even if the command body
   succeeded** — a cleanup failure is a real failure.
 

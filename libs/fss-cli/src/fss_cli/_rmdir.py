@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ._command import (
+    _drain_current_operation,
     _Failure,
     _MappedOperand,
     _raise_operand_failures,
@@ -37,7 +38,7 @@ async def _require_directory(
     filesystem: AsyncFileSystem,
 ) -> _RmdirFailure | None:
     try:
-        info = await filesystem._info(operand.path)
+        info = await _drain_current_operation(filesystem._info(operand.path))
     except Exception as error:  # noqa: BLE001 - classify awaited backend failure.
         return _RmdirFailure(operand, backend_error=error)
 
@@ -58,7 +59,7 @@ async def _observe_post_mutation(
     mutation_error: Exception | None,
 ) -> _RmdirFailure | None:
     try:
-        await filesystem._info(operand.path)
+        await _drain_current_operation(filesystem._info(operand.path))
     except FileNotFoundError:
         # Absence proves success, including after a mutation-call exception.
         return None
@@ -89,7 +90,7 @@ async def _remove_empty_directory(
 
     mutation_error: Exception | None = None
     try:
-        await rmdir(operand.path)
+        await _drain_current_operation(rmdir(operand.path))
     except Exception as error:  # noqa: BLE001 - mutation may leave uncertain state.
         mutation_error = error
 

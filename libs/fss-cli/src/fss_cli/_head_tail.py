@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from ._command import (
     _binary_stdout,
     _CommandFailureError,
+    _drain_current_operation,
     _MappedOperand,
     _run_mapped_command,
     _valid_size,
@@ -35,17 +36,13 @@ async def _read_head(
 ) -> bytes:
     if request.count == 0:
         try:
-            info = await filesystem._info(request.operand.path)
+            info = await _drain_current_operation(filesystem._info(request.operand.path))
         except Exception as error:
             raise _CommandFailureError(request.operand, error) from error
         if _is_file(request.operand, info):
             return b""
     try:
-        result = await filesystem._cat_file(
-            request.operand.path,
-            start=0,
-            end=request.count,
-        )
+        result = await _drain_current_operation(filesystem._cat_file(request.operand.path, start=0, end=request.count))
     except Exception as error:
         raise _CommandFailureError(request.operand, error) from error
     if type(result) is not bytes or len(result) > request.count:
@@ -84,17 +81,15 @@ async def _read_tail(
     filesystem: AsyncFileSystem,
 ) -> bytes:
     try:
-        info = await filesystem._info(request.operand.path)
+        info = await _drain_current_operation(filesystem._info(request.operand.path))
     except Exception as error:
         raise _CommandFailureError(request.operand, error) from error
     _size_from_info(request.operand, info)
     if request.count == 0 and _is_file(request.operand, info):
         return b""
     try:
-        result = await filesystem._cat_file(
-            request.operand.path,
-            start=-request.count,
-            end=None,
+        result = await _drain_current_operation(
+            filesystem._cat_file(request.operand.path, start=-request.count, end=None)
         )
     except Exception as error:
         raise _CommandFailureError(request.operand, error) from error

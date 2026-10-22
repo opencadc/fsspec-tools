@@ -8,6 +8,7 @@ import typer
 
 from ._command import (
     _CommandFailureError,
+    _drain_current_operation,
     _MappedOperand,
     _run_mapped_command,
     _valid_size,
@@ -44,7 +45,7 @@ async def _measure_one(
     filesystems: Mapping[str, AsyncFileSystem],
 ) -> str:
     try:
-        result = await filesystems[operand.name]._size(operand.path)
+        result = await _drain_current_operation(filesystems[operand.name]._size(operand.path))
     except Exception as error:
         raise _CommandFailureError(operand, error) from error
     if not _valid_size(result):
@@ -60,7 +61,7 @@ async def _measure_many(
     for name, group in _group_operands(operands).items():
         paths = [operand.path for _, operand in group]
         try:
-            result = await filesystems[name]._sizes(paths)
+            result = await _drain_current_operation(filesystems[name]._sizes(paths))
         except Exception as error:
             raise _CommandFailureError(group[0][1], error) from error
         if type(result) is not list or len(result) != len(group):

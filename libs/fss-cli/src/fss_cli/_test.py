@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Literal
 
 from ._command import (
     _CommandFailureError,
+    _drain_current_operation,
     _MappedOperand,
     _run_mapped_command,
 )
@@ -27,11 +28,11 @@ async def _evaluate(
 ) -> object:
     path = operand.path
     if predicate == "e":
-        result = await filesystem._exists(path)
+        result = await _drain_current_operation(filesystem._exists(path))
     elif predicate == "d":
-        result = await filesystem._isdir(path)
+        result = await _drain_current_operation(filesystem._isdir(path))
     else:
-        result = await filesystem._isfile(path)
+        result = await _drain_current_operation(filesystem._isfile(path))
     return result
 
 

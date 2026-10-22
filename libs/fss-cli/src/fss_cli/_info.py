@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, cast
 from ._command import (
     _binary_stdout,
     _CommandFailureError,
+    _drain_current_operation,
     _MappedOperand,
     _run_mapped_command,
     _write_binary,
@@ -146,7 +147,7 @@ async def _read_info(
     filesystem: AsyncFileSystem,
 ) -> bytes:
     try:
-        result = await filesystem._info(operand.path)
+        result = await _drain_current_operation(filesystem._info(operand.path))
     except Exception as error:
         raise _CommandFailureError(operand, error) from error
     payload = _normalize_info(result)

@@ -20,6 +20,7 @@ from ._accounts import owner_name as _owner_name
 from ._command import (
     _binary_stdout,
     _CommandFailureError,
+    _drain_current_operation,
     _Failure,
     _first_backend_error,
     _MappedOperand,
@@ -129,7 +130,7 @@ async def _read_operand(
     filesystem: AsyncFileSystem,
 ) -> _StatSuccess | _Failure:
     try:
-        info = await filesystem._info(operand.path)
+        info = await _drain_current_operation(filesystem._info(operand.path))
     except Exception as error:  # noqa: BLE001 - classify awaited backend failure.
         return _Failure(operand, backend_error=error)
 

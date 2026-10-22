@@ -7,6 +7,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 from ._command import (
+    _drain_current_operation,
     _Failure,
     _MappedOperand,
     _raise_operand_failures,
@@ -37,7 +38,7 @@ async def _confirmed_rm_file(  # noqa: PLR0911 - explicit outcome branches.
 ) -> _UnlinkFailure | None:
     """Remove one source-reported file and confirm absence."""
     try:
-        info = await filesystem._info(operand.path)
+        info = await _drain_current_operation(filesystem._info(operand.path))
     except Exception as error:  # noqa: BLE001 - classify awaited backend failure.
         return _UnlinkFailure(operand, backend_error=error)
 
@@ -51,12 +52,12 @@ async def _confirmed_rm_file(  # noqa: PLR0911 - explicit outcome branches.
         return _UnlinkFailure(operand, incompatible="result")
 
     try:
-        await filesystem._rm_file(operand.path)
+        await _drain_current_operation(filesystem._rm_file(operand.path))
     except Exception as error:  # noqa: BLE001 - mutation may have partially applied.
         return _UnlinkFailure(operand, backend_error=error, uncertain=True)
 
     try:
-        await filesystem._info(operand.path)
+        await _drain_current_operation(filesystem._info(operand.path))
     except FileNotFoundError:
         return None
     except Exception as error:  # noqa: BLE001 - never hide non-not-found errors.

@@ -17,6 +17,7 @@ from ._command import (
     _binary_stdout,
     _BinaryWriter,
     _CommandFailureError,
+    _drain_current_operation,
     _Failure,
     _MappedOperand,
     _render_failure,
@@ -159,7 +160,7 @@ async def _stage_operand(
 ) -> str | _Failure | _StagingFailure:
     # fsspec's native async API intentionally exposes underscore coroutines.
     try:
-        info = await filesystem._info(operand.path)
+        info = await _drain_current_operation(filesystem._info(operand.path))
     except Exception as error:  # noqa: BLE001 - classify awaited backend failure.
         return _Failure(operand, backend_error=error)
 
@@ -184,7 +185,7 @@ async def _stage_operand(
         )
 
     try:
-        await filesystem._get_file(operand.path, temporary)
+        await _drain_current_operation(filesystem._get_file(operand.path, temporary))
     except Exception as error:  # noqa: BLE001 - classify awaited backend failure.
         return _failure_after_temporary(
             ownership,

@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from ._command import (
     _backend_category,
+    _drain_current_operation,
     _Failure,
     _MappedOperand,
     _raise_operand_failures,
@@ -65,20 +66,14 @@ async def _create_operand(
 ) -> _Failure | None:
     try:
         if create_parents:
-            await filesystem._makedirs(
-                operand.path,
-                exist_ok=True,
-            )
+            await _drain_current_operation(filesystem._makedirs(operand.path, exist_ok=True))
         else:
-            await filesystem._mkdir(
-                operand.path,
-                create_parents=False,
-            )
+            await _drain_current_operation(filesystem._mkdir(operand.path, create_parents=False))
     except Exception as error:  # noqa: BLE001 - classify awaited backend failure.
         return _Failure(operand, backend_error=error)
 
     try:
-        info = await filesystem._info(operand.path)
+        info = await _drain_current_operation(filesystem._info(operand.path))
     except Exception as error:  # noqa: BLE001 - post-mutation verify is uncertain.
         return _Failure(operand, backend_error=error, uncertain=True)
 
