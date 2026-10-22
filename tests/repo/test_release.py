@@ -28,6 +28,7 @@ def test_release_baseline_excludes_import_and_preserves_unreleased_changes() -> 
         path: tomllib.loads((ROOT / path / "pyproject.toml").read_text())["project"]["version"] for path in PACKAGES
     } == MANIFEST
     assert CONFIG["separate-pull-requests"] is True
+    assert CONFIG["pull-request-title-pattern"] == "chore(repo): release${component} ${version}"
     assert CONFIG["include-component-in-tag"] is True
     assert CONFIG["draft"] is True
     if "bootstrap-sha" in CONFIG:
@@ -87,6 +88,10 @@ def test_recovery_reuses_artifacts_and_never_clobbers_release_assets() -> None:
     assert "--require-published" in text
     assert set(loaded["jobs"]["verify"]["needs"]) == {"build", "publish"}
     assert "--clobber" not in text
+    finalization = loaded["jobs"]["github-release"]["steps"][-1]["run"]
+    release_commands = [line for line in finalization.splitlines() if "gh release " in line]
+    assert len(release_commands) == 2
+    assert all('--repo "$GITHUB_REPOSITORY"' in line for line in release_commands)
     assert "sha256sum" in text
     assert "needs.build.outputs.index == 'pypi'" in loaded["jobs"]["github-release"]["if"]
     assert set(loaded["jobs"]["github-release"]["needs"]) == {"build", "verify"}

@@ -246,7 +246,7 @@ jobs:
                 -H 'Accept: application/octet-stream' | sha256sum | cut -d ' ' -f 1)
               [[ "$expected" == "$actual" ]] || { echo "Conflicting release asset $name" >&2; exit 1; }
             else
-              gh release upload "$TAG" "$file"
+              gh release upload "$TAG" "$file" --repo "$GITHUB_REPOSITORY"
             fi
           done
-          gh release edit "$TAG" --draft=false
+          gh release edit "$TAG" --draft=false --repo "$GITHUB_REPOSITORY"
