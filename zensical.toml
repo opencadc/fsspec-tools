@@ -1,0 +1,39 @@
+[project]
+site_name = "fsspec-tools"
+site_description = "Documentation for the vosfs and fss-cli Python libraries."
+site_author = "fsspec-tools contributors"
+site_url = "https://opencadc.github.io/fsspec-tools/"
+docs_dir = "docs/user"
+site_dir = "site"
+repo_url = "https://github.com/opencadc/fsspec-tools"
+nav = [
+    { "Home" = "index.md" },
+    { "User Guide" = "guide.md" },
+    { "Recipes" = "recipes.md" },
+    { "Troubleshooting" = "troubleshooting.md" },
+    { "API Reference" = "api-reference.md" },
+    { "fss-cli" = [
+        { "Overview" = "cli/index.md" },
+        { "Integration" = "cli/integration.md" },
+        { "Command Reference" = "cli/commands.md" },
+        { "API Reference" = "cli/api-reference.md" },
+    ] },
+    { "Releases" = "https://github.com/opencadc/fsspec-tools/releases" },
+    { "Contributing" = "https://github.com/opencadc/fsspec-tools/blob/main/CONTRIBUTING.md" },
+]
+
+[project.theme]
+variant = "modern"
+language = "en"
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["libs/vosfs/src", "libs/fss-cli/src"]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "google"
+filters = ["!^_"]
+members_order = "source"
+show_object_full_path = false
+show_root_heading = true
+show_root_full_path = false
+show_source = true
