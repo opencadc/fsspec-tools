@@ -1,6 +1,8 @@
 """Recursive-command compatibility evidence for native vosfs."""
 
 import asyncio
+import gc
+import warnings
 from collections.abc import Callable
 
 import httpx
@@ -31,6 +33,7 @@ from .test_vosfs_command_matrix import _CpMockTransport
 
 class _RecursiveRmMockTransport(httpx.MockTransport):
     def __init__(self) -> None:
+        self.owner = asyncio.current_task()
         self.requests: list[tuple[str, str]] = []
         self.closed = False
         self.events: list[str] = []
@@ -107,9 +110,8 @@ class _RecursiveRmMockTransport(httpx.MockTransport):
                 return httpx.Response(200, content=self._node_xml(path))
             if call[0] == "DELETE":
                 if path == self.cancel_delete_path:
-                    current = asyncio.current_task()
-                    owner = next(task for task in asyncio.all_tasks() if task is not current)
-                    owner.cancel()
+                    assert self.owner is not None
+                    self.owner.cancel()
                     await asyncio.sleep(0)
                     self.events.append("delete-drained")
                 if path in self.disappear_before_delete:
@@ -275,7 +277,7 @@ def test_native_vosfs_recursive_rm_reports_concurrent_addition() -> None:
     assert transports[0].closed
 
 
-def test_native_vosfs_recursive_rm_drains_cancelled_delete() -> None:
+def _exercise_cancelled_recursive_rm() -> None:
     def configure(transport: _RecursiveRmMockTransport) -> None:
         transport.cancel_delete_path = "/docs/empty"
 
@@ -296,6 +298,16 @@ def test_native_vosfs_recursive_rm_drains_cancelled_delete() -> None:
     assert "/docs/empty" not in transports[0].nodes
     assert "/docs/nested/a.txt" not in transports[0].nodes
     assert "/docs" in transports[0].nodes
+
+
+def test_native_vosfs_recursive_rm_drains_cancelled_delete() -> None:
+    gc.collect()
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always", RuntimeWarning)
+        for _ in range(8):
+            _exercise_cancelled_recursive_rm()
+            gc.collect()
+    assert not [str(warning.message) for warning in caught if issubclass(warning.category, RuntimeWarning)]
 
 
 def test_native_vosfs_recursive_cp_profile_uses_only_mocked_transport() -> None:

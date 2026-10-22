@@ -710,13 +710,13 @@ class _CancellingFileSystem(AsyncFileSystem):
         super().__init__(asynchronous=True)
         self.stage = stage
         self.events = events
+        self.owner = asyncio.current_task()
         self.info_calls: dict[str, int] = {}
         self.removed: set[str] = set()
 
     async def _cancel_invocation(self, stage: str) -> None:
-        current = asyncio.current_task()
-        outer = next(task for task in asyncio.all_tasks() if task is not current)
-        outer.cancel()
+        assert self.owner is not None
+        self.owner.cancel()
         await asyncio.sleep(0)
         self.events.append(f"{stage}-drained")
 
