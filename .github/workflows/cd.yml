@@ -43,39 +43,26 @@ jobs:
           RELEASE_PRS: ${{ steps.release.outputs.prs }}
         run: python tools/release_notes.py
 
-      - name: Dispatch each released package
-        if: "success() && github.repository == 'opencadc/fsspec-tools'"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OUTPUTS: ${{ toJson(steps.release.outputs) }}
-        run: |
-          set -euo pipefail
-          if [[ "$GITHUB_REPOSITORY" != "opencadc/fsspec-tools" ]]; then
-            echo "refusing to dispatch from $GITHUB_REPOSITORY" >&2
-            exit 1
-          fi
-          releases_created=$(jq -r '.releases_created // false' <<<"$OUTPUTS")
-          if [[ "$releases_created" != "true" ]]; then
-            exit 0
-          fi
-          mapfile -t paths < <(jq -r '
-            if (.paths_released | type) == "string" then .paths_released | fromjson[]
-            elif .paths_released == null then empty
-            else .paths_released[] end
-          ' <<<"$OUTPUTS")
-          if [[ ${#paths[@]} -eq 0 ]]; then
-            echo "release-please reported a release but no package paths" >&2
-            exit 1
-          fi
-          for path in "${paths[@]}"; do
-            tag=$(jq -r --arg key "${path}--tag_name" '.[$key] // empty' <<<"$OUTPUTS")
-            sha=$(jq -r --arg key "${path}--sha" '.[$key] // empty' <<<"$OUTPUTS")
-            package=${path#libs/}
-            if [[ ! "$path" =~ ^libs/(vosfs|fss-cli)$ || ! "$tag" =~ ^${package}-v[0-9]+\.[0-9]+\.[0-9]+$ || ! "$sha" =~ ^[0-9a-f]{40}$ ]]; then
-              echo "refusing to dispatch invalid release path=$path tag=$tag sha=$sha" >&2
-              exit 1
-            fi
-            jq -n --arg path "$path" --arg package "$package" --arg tag "$tag" --arg sha "$sha" \
-              '{event_type:"pypi-release", client_payload:{path:$path, package:$package, tag_name:$tag, sha:$sha}}' \
-              | gh api "repos/${GITHUB_REPOSITORY}/dispatches" --input -
-          done
+      - name: Dispatch vosfs publication
+        if: steps.release.outputs['libs/vosfs--release_created'] == 'true'
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: pypi-release
+          client-payload: |-
+            {
+              "tag_name": "${{ steps.release.outputs['libs/vosfs--tag_name'] }}",
+              "sha": "${{ steps.release.outputs['libs/vosfs--sha'] }}"
+            }
+
+      - name: Dispatch fss-cli publication
+        if: steps.release.outputs['libs/fss-cli--release_created'] == 'true'
+        uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: pypi-release
+          client-payload: |-
+            {
+              "tag_name": "${{ steps.release.outputs['libs/fss-cli--tag_name'] }}",
+              "sha": "${{ steps.release.outputs['libs/fss-cli--sha'] }}"
+            }
