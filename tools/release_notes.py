@@ -1,4 +1,4 @@
-"""Correct migration provenance in the first generated release PRs."""
+"""Preserve source references in the first generated release PRs."""
 
 from __future__ import annotations
 
@@ -97,14 +97,9 @@ def update_pull_requests(pulls: list[dict], manifest: dict[str, str], origins: d
 def main() -> None:
     """Load frozen provenance and process the pinned action's PR output."""
     if os.environ["GITHUB_REPOSITORY"] != REPOSITORY:
-        msg = "migration note correction runs only in the canonical repository"
+        msg = "release note correction runs only in the canonical repository"
         raise RuntimeError(msg)
-    mapping = json.loads((ROOT / "docs/migration/history-commits.json").read_text())
-    original = mapping["original_to_imported"]
-    origins = {
-        destination: "shinybrar/vosfs" if destination in original else "shinybrar/vostools"
-        for destination in mapping["vostools_to_destination"].values()
-    }
+    origins = json.loads((ROOT / "tools/release-origins.json").read_text())
     manifest = json.loads((ROOT / ".release-please-manifest.json").read_text())
     update_pull_requests(json.loads(os.environ["RELEASE_PRS"]), manifest, origins)
 
