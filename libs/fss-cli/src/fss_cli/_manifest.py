@@ -260,5 +260,5 @@ async def _manifest(
     reported_path = source_info.get("name")
     if type(reported_path) is not str or not _same_lexical_path(reported_path, path):
         raise _IncompatibleResultError
-    root_entry = _entry("", reported_path, source_info, expected_kind="directory")
+    root_entry = _entry("", path, source_info, expected_kind="directory")
     return await _walk_rows(filesystem, root_entry)

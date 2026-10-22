@@ -16,7 +16,11 @@ from ._concurrent import _gather_bounded, _outcome_value, _run_bounded
 from ._metadata import snapshot_mapping
 from ._path import (
     _has_dot_segment,
+    _is_same_or_descendant,
+    _lexical_basename,
+    _lexical_join,
     _lexical_parent,
+    _same_lexical_path,
 )
 
 if TYPE_CHECKING:
@@ -59,10 +63,6 @@ def _has_required_hooks(filesystem: AsyncFileSystem) -> bool:
     return all(callable(getattr(filesystem, name, None)) for name in _REQUIRED_HOOKS)
 
 
-def _is_contained(root: str, path: str) -> bool:
-    return path == root or path.startswith(f"{root}/")
-
-
 def _freeze_mapping(value: object) -> Mapping[object, object]:
     if not isinstance(value, Mapping):
         raise _IncompatibleManifestError
@@ -90,7 +90,7 @@ def _entry_fields(value: object) -> tuple[str, str]:
 
 def _root_entry(path: str, value: object) -> _ManifestEntry:
     name, kind = _entry_fields(value)
-    if name.rstrip("/") != path:
+    if not _same_lexical_path(name, path):
         raise _IncompatibleManifestError
     if kind != "directory":
         raise NotADirectoryError(path)
@@ -108,11 +108,11 @@ def _listed_entry(parent: str, root: str, value: object) -> _ManifestEntry:
         or "\n" in name
         or "\r" in name
         or _has_dot_segment(name)
-        or not _is_contained(root, name)
-        or _lexical_parent(name) != parent
+        or not _is_same_or_descendant(root, name)
+        or not _same_lexical_path(_lexical_parent(name), parent)
     ):
         raise _IncompatibleManifestError
-    return _ManifestEntry(name, kind)
+    return _ManifestEntry(_lexical_join(parent, _lexical_basename(name)), kind)
 
 
 def _frozen_listing(
@@ -196,7 +196,7 @@ def _revalidate_manifest(manifest: _Manifest) -> None:
     seen: set[str] = set()
     directories = {manifest.root}
     for entry in manifest.entries:
-        if entry.path in seen or not _is_contained(manifest.root, entry.path):
+        if entry.path in seen or not _is_same_or_descendant(manifest.root, entry.path):
             raise _IncompatibleManifestError
         seen.add(entry.path)
         if entry.kind == "directory":
@@ -252,7 +252,7 @@ async def _remove_entry(
     entry: _ManifestEntry,
 ) -> _RecursiveRmFailure | None:
     """Remove one entry, then prove its absence."""
-    if not _is_contained(manifest.root, entry.path):
+    if not _is_same_or_descendant(manifest.root, entry.path):
         return _RecursiveRmFailure(operand, "incompatible result")
     operation = "_rm_file" if entry.kind == "file" else "_rmdir"
     try:

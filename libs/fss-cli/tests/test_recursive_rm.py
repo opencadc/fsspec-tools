@@ -401,6 +401,26 @@ def test_recursive_rm_allows_force_and_verbose_before_recursive_option() -> None
             "incompatible result",
         ),
         (
+            {"name": "docs", "type": "directory"},
+            [{"name": "/docs/a", "type": "file"}, {"name": "docs/a", "type": "file"}],
+            "incompatible result",
+        ),
+        (
+            {"name": "docs", "type": "directory"},
+            [{"name": "/docs/a", "type": "file"}, {"name": "docs//a", "type": "file"}],
+            "incompatible result",
+        ),
+        (
+            {"name": "docs", "type": "directory"},
+            [{"name": "docs-other/a", "type": "file"}],
+            "incompatible result",
+        ),
+        (
+            {"name": "docs", "type": "directory"},
+            [{"name": "docs/../a", "type": "file"}],
+            "incompatible result",
+        ),
+        (
             {"name": "/docs", "type": "directory"},
             {"name": "/docs/a", "type": "file"},
             "incompatible result",

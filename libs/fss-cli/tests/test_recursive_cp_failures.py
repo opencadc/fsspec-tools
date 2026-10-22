@@ -25,11 +25,15 @@ class _ListSubclass(list):
 
 _MALFORMED_LISTINGS: dict[str, object] = {
     "duplicate": [_file_info("/docs/f"), _file_info("/docs/f")],
+    "slashless-duplicate": [_file_info("/docs/f"), _file_info("docs/f")],
+    "repeated-separator-duplicate": [_file_info("/docs/f"), _file_info("docs//f")],
     "duplicate-directory": [
         {"name": "/docs/d", "type": "directory", "size": 0},
         _file_info("/docs/d/"),
     ],
     "outside": [_file_info("/outside/f")],
+    "slashless-outside": [_file_info("docs-other/f")],
+    "slashless-dot-segment": [_file_info("docs/../f")],
     "nested": [_file_info("/docs/deeper/f")],
     "self": [{"name": "/docs", "type": "directory", "size": 0}],
     "tuple": (_file_info("/docs/f"),),

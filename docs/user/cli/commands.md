@@ -4,6 +4,11 @@ Every command takes operands spelled `name:/path`. `name` is a key from the
 source mapping you passed to `App`; `/path` is handed to that backend
 literally.
 
+Recursive `cp` and `rm` also accept backend metadata names without a leading
+slash. For example, `bucket/docs/file` can describe `/bucket/docs/file`.
+Duplicate names, dot segments, and entries outside the selected tree still fail
+validation before any copy or removal starts.
+
 `--` ends option parsing. A mapped operand always begins with `name:`, and a
 source name may not start with `-`.
 

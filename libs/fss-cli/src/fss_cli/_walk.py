@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, cast
 
 from ._command import _call
 from ._concurrent import _outcome_value, _run_bounded
-from ._path import _same_lexical_path
+from ._path import _lexical_join, _same_lexical_path
 from ._results import _BadResultError, snapshot_listing
 
 if TYPE_CHECKING:
@@ -78,7 +78,7 @@ def _listed_row(
             collection = directories if info["type"] == "directory" else files
         collection[key] = info
         if collection is directories:
-            children.append(pathname)
+            children.append(_lexical_join(root, key))
     return _ListedRow(root, directories, files), tuple(children)
 
 
