@@ -230,7 +230,8 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]]
-          release=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG")
+          release_id=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json databaseId --jq '.databaseId')
+          release=$(gh api "repos/$GITHUB_REPOSITORY/releases/$release_id")
           for file in dist/*; do
             name=${file##*/}
             asset=$(jq -r --arg name "$name" '.assets[] | select(.name == $name) | .id' <<<"$release")
