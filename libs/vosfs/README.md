@@ -5,9 +5,9 @@
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-blue)](LICENSE)
 
 `vosfs` is an asynchronous [`fsspec`](https://filesystem-spec.readthedocs.io/)
-filesystem for the **OpenCADC Cavern VOSpace** service: it registers the `vos`
-protocol so fsspec-aware Python tools — and pandas, NumPy, Dask, Zarr, and
-PyArrow — can read, write, inspect, and mutate OpenCADC VOSpace paths.
+filesystem for OpenCADC Cavern VOSpace. It registers the `vos` protocol so
+fsspec-aware tools can read, write, inspect, and manage VOSpace files and
+directories. Supported tools include pandas, NumPy, Dask, Zarr, and PyArrow.
 
 Supported host platforms are Linux and macOS. Other platforms are untested and
 unsupported.
@@ -18,11 +18,10 @@ unsupported.
 uv add "git+https://github.com/opencadc/fsspec-tools@main#subdirectory=libs/vosfs"
 ```
 
-## Quickstart
+## Quick start
 
-The normal synchronous fsspec API is available even though network I/O is
-implemented asynchronously. For an authenticated first request, point
-`VOSFS_CERT_FILE` at a combined proxy-certificate and private-key PEM file:
+The synchronous fsspec API uses async network I/O internally. To authenticate,
+set `VOSFS_CERT_FILE` to a combined proxy-certificate and private-key PEM file:
 
 ```bash
 export VOSFS_CERT_FILE=/absolute/path/to/cadcproxy.pem
@@ -40,30 +39,31 @@ finally:
 
 ## Capabilities
 
-| fsspec surface | Support |
+| fsspec operation | Support |
 | --- | --- |
 | `ls`, `info`, `exists`, `walk`, `find`, `glob` | Listing and metadata |
-| `cat_file`, `get`, `open("rb")` | Whole-object staged reads |
+| `cat_file`, `cat_ranges` | Response-validated HTTP ranges with whole-object fallback |
+| `get`, `open("rb")` | Whole-object downloads; `open` stages to disk by default and uses ranges when `block_size` or `cache_type` is supplied |
 | `pipe_file`, `put`, `open("wb")` | Whole-object staged writes |
 | `mkdir`, `makedirs`, `rm`, `rmdir` | Namespace creation and deletion |
 | `cp` | Client-side copy; an internal same-authority LinkNode materializes target bytes, while an external or non-VOS LinkNode raises `NotImplementedError` before mutation |
-| `mv` | DataNode/ContainerNode copy/recreate then delete; LinkNode move raises `NotImplementedError` before mutation |
-| Remote byte ranges, append modes, FUSE | Unsupported |
+| `mv` | Same-service `moveNode` job when available; otherwise copy, verify, then delete. LinkNode moves raise `NotImplementedError` before mutation |
+| Append/update modes, FUSE | Unsupported |
 
 `vosfs` targets the OpenCADC VOSpace profile only; it does not claim generic
-IVOA VOSpace 2.1 conformance. The normative surface — including the full fsspec
-capability matrix — is the capability contract in
+IVOA VOSpace 2.1 conformance. The full capability contract and fsspec support
+matrix are in
 [`docs/design/trd.md`](docs/design/trd.md).
 
 ## Documentation
 
-The [vosfs documentation](https://opencadc.github.io/fsspec-tools/) contains the User
-Guide, task-first [recipes](../../docs/user/recipes.md), symptom-keyed
+The [vosfs documentation](https://opencadc.github.io/fsspec-tools/) contains the user
+guide, [recipes](../../docs/user/recipes.md),
 [troubleshooting](../../docs/user/troubleshooting.md), the public API reference, and
 the [`fss-cli`](../../docs/user/cli/index.md) integration guide.
 
 The design contract for `fss-cli` lives in
-[`docs/design/fss-cli/`](../fss-cli/docs/design/) and the architecture
+[`libs/fss-cli/docs/design/`](../fss-cli/docs/design/) and the architecture
 decisions in [`docs/adr/`](../../docs/adr/).
 
 See [CONTRIBUTING.md](../../CONTRIBUTING.md) to work on the project. Public

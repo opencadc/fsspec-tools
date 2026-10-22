@@ -1,16 +1,13 @@
 """Frozen, validated manifests built from a backend directory walk.
 
-Recursive copy plans the whole transfer before it mutates anything, so this
-module turns a backend's breadth-first ``_ls`` listings into an immutable manifest of
-entries — or refuses. Per
+Recursive copy uses this module to validate and freeze a transfer plan before
+writing any destination. Per
 :doc:`ADR 0006 <../../../../docs/adr/0006-treat-backend-results-as-untrusted-input>`,
-every field of every returned row is validated here: a malformed path or a
-duplicated child is not a rendering bug when the caller will go on to *delete
-or overwrite* along these paths.
+backend listings are untrusted. Invalid paths and duplicate children must fail
+before copy can overwrite files at those paths.
 
-Three refusals are distinguished, because the command renders them differently:
-an incompatible result, an entry type the profile excludes (a link or special
-file), and a tree larger than the bound.
+The command reports incompatible results, unsupported entry types, and trees
+above the entry limit separately.
 """
 
 from __future__ import annotations

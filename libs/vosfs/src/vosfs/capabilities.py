@@ -38,13 +38,11 @@ _STANDARD_ROLE = "std"
 class ServiceBindings:
     """The resolved node and synchronous-transfer operation URLs.
 
-    Byte access is a *negotiated capability*. A ``None`` URL means the
-    deployment advertises no binding for that operation usable with the
-    configured credential; the dependent operation raises
-    ``NotImplementedError`` naming the missing capability when used. A
-    deployment that advertises no usable synchronous-transfer binding still
-    supports node metadata operations — only byte read/write is disabled — so
-    the absence of a transfer binding is a supported degradation, not a fault.
+    A ``None`` URL means the deployment advertises no binding for that
+    operation usable with the configured credential. Calling the operation
+    raises ``NotImplementedError`` naming the missing capability. Without a
+    synchronous-transfer binding, node metadata operations remain available,
+    but byte reads and writes are disabled.
     """
 
     nodes_url: str | None
@@ -166,11 +164,9 @@ def _accepts(interface: ET.Element, security_method: str) -> bool:
 def _access_url(interface: ET.Element, *, use: str) -> str | None:
     """Return the access URL matching ``use``, or an unqualified one.
 
-    An ``accessURL`` whose ``use`` differs (for example a ``full`` URL when a
-    ``base`` URL is required, or the reverse) is never returned: the two are not
-    interchangeable — a ``base`` URL is meant to have a node path appended, a
-    ``full`` URL is used verbatim. Only an ``accessURL`` that omits ``use``
-    entirely is accepted as a fallback.
+    A ``base`` URL needs a node path appended. A ``full`` URL is used verbatim.
+    Reject an ``accessURL`` whose ``use`` differs from the requested value.
+    Accept a URL without ``use`` only when no matching qualified URL exists.
     """
     urls = [element for element in interface if local_name(element.tag) == "accessURL"]
     for element in urls:

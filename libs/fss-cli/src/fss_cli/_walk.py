@@ -7,11 +7,10 @@ content missing. Commands that walk a tree therefore list it here instead:
 every directory of one depth is listed concurrently under the shared bound,
 and a listing failure at **any** depth raises.
 
-Rows have the shape fsspec's ``_walk(detail=True)`` yields — the listed root
-plus child directory and file info mappings keyed by basename, with a
-file-like entry for the root itself keyed ``""`` — so each command keeps its
-own row validation. Listing results are untrusted (ADR 0006): only the shape
-needed to form a row is checked here; callers validate the rest.
+Rows match fsspec's ``_walk(detail=True)`` format. Each row contains the listed
+root and child directory and file metadata, keyed by basename. A file-like
+entry for the root itself uses the key ``""``. This module checks the fields
+needed to build a row. Commands validate the remaining fields under ADR 0006.
 """
 
 from __future__ import annotations

@@ -1,11 +1,10 @@
 """HTTPX client pool and lifecycle for the vos filesystem.
 
-HTTPX is the sole production HTTP client. The pool is keyed by TLS
-configuration and built lazily and concurrency-safely: one validating
-no-client-certificate client for anonymous, bearer, and pre-authorized
-requests, and — when a certificate is configured — one validating client whose
-fresh ``ssl.SSLContext`` loads the combined PEM. Bearer credentials are
-per-request headers, never pool keys.
+HTTPX is the sole production HTTP client. The pool creates clients on first
+use under a lock. Anonymous, bearer, and pre-authorized requests share one
+client without a client certificate. Certificate requests use a separate
+client whose ``ssl.SSLContext`` loads the combined PEM. Both clients validate
+server certificates. Bearer tokens are per-request headers, never pool keys.
 """
 
 from __future__ import annotations

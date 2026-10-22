@@ -1,15 +1,10 @@
-"""Client-derived move over the OpenCADC VOSpace profile.
+"""Server moves and client-side move fallbacks for OpenCADC VOSpace.
 
-The service exposes no atomic rename, so a move is four explicit phases:
-
-1. **plan** — resolve every policy question before touching the destination;
-2. **copy** — recreate the source tree at the destination;
-3. **verify** — prove each destination exists with the expected type and size;
-4. **delete** — only then remove the sources, leaves-first.
-
-Deletion never runs on unverified state. A failure after step 2 keeps *both*
-paths and reports which entries completed, because a move that has copied but
-not deleted is recoverable while one that deleted without copying is not.
+Plan the move before changing the destination. Try a server ``moveNode`` job
+when available. The fallback copies the source tree, verifies destination
+types and sizes, then deletes source entries leaves-first. In the fallback,
+copy or verification failures keep the source and report completed and failed
+destination entries.
 """
 
 from __future__ import annotations

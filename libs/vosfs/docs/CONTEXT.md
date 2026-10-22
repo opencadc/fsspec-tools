@@ -42,15 +42,14 @@ _Avoid_: Backend capability, protocol discovery
 
 **Embedded command library**:
 The separately installable, library-only `fss-cli` uv workspace member at
-`src/fss-cli`, with its Python package at `src/fss-cli/src/fss_cli`,
-that turns named async filesystem sources into POSIX-shaped Typer commands. Its
-sole stable v1 seam for host tools is
-`App(sources, *, capabilities=None, extensions=[...]).typer_app`; capabilities
-are validated application policy for core commands, while extensions add
-opt-in commands without receiving that policy or changing the core surface
-when omitted. The embedded command library owns each yielded filesystem only
-for one command invocation, while hosts own source configuration and cleanup
-declaration.
+`libs/fss-cli`, with its Python package at `libs/fss-cli/src/fss_cli`.
+It turns named async filesystem sources into POSIX-shaped Typer commands.
+Its stable v1 entry point is
+`App(sources, *, capabilities=None, extensions=[...]).typer_app`.
+Capabilities set application policy for core commands. Extensions add commands
+without receiving that policy. Omitting extensions leaves the core commands
+unchanged. The library owns each yielded filesystem for one command invocation.
+The host configures the sources and declares their cleanup.
 _Avoid_: vosfs CLI, fss-cli executable
 
 **Async filesystem source**:

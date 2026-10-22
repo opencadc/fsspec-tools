@@ -5,9 +5,8 @@ independent calls run them concurrently under one fixed bound. Results are
 always returned in submission order, so output and the reported failure stay
 deterministic regardless of completion order.
 
-Per :doc:`lessons.md §3 <../../../vosfs/docs/design/fss-cli/lessons>`, a started
-operation is never orphaned: after the first failure no new operation starts,
-and every in-flight one is drained before control flow propagates.
+After the first failure, no new operation starts. Every operation already in
+flight finishes before control flow propagates.
 """
 
 from __future__ import annotations
@@ -136,11 +135,11 @@ async def _run_bounded(
     before a stopping one has an outcome, so a caller scanning the result in
     order meets the first failure in submission order before any ``None``.
 
-    A control-flow exception (cancellation, ``KeyboardInterrupt``) raised by
-    an operation or delivered to the caller cancels the other started
-    operations — each drains its in-flight hook call through
-    ``_drain_current_operation`` — and propagates only after every started
-    operation has finished.
+    A control-flow exception cancels the other started operations. This
+    includes cancellation and ``KeyboardInterrupt``, whether raised by an
+    operation or delivered to the caller. Each operation drains its in-flight
+    hook call through ``_drain_current_operation``. The exception propagates
+    only after every started operation has finished.
 
     Args:
         operations: Zero-argument callables, each starting one operation.
