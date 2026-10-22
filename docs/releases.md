@@ -25,8 +25,9 @@ Set `RELEASE_ENABLED=true` to enable release-please and `PYPI_ENABLED=true` to
 allow production uploads. Missing or false variables leave the corresponding
 automation disabled. TestPyPI registration is needed only for a TestPyPI run.
 
-Review the independent release PRs and approve their CI workflows if GitHub
-requests it. Merging a release PR creates its tag and draft release, then
+Configure `RELEASE_PLEASE_TOKEN` before enabling release-please, as described
+below. Review the independent release PRs after their CI checks pass.
+Merging a release PR creates its tag and draft release, then
 starts publishing automatically. Production publication waits for successful
 main CI on the exact tagged commit. No PyPI API token is required.
 
@@ -34,6 +35,31 @@ For an optional rehearsal, keep `PYPI_ENABLED=false`, merge a release PR, and
 run **Publish to PyPI** on `main` with its tag and index `testpypi`. After checking
 the install, enable production and dispatch the same tag to `pypi`, supplying
 the successful TestPyPI run's `artifact_run_id` to reuse the tested files.
+
+## Automatic CI for release PRs
+
+Release-please and the initial release-note correction both use the repository
+secret `RELEASE_PLEASE_TOKEN`. GitHub requires approval for PR workflows triggered
+by its built-in `GITHUB_TOKEN`; a separate release token lets those workflows
+start automatically. The release workflow fails with a setup error when this
+secret is missing rather than silently falling back to `GITHUB_TOKEN`.
+
+Create a fine-grained personal access token with resource owner `opencadc`,
+access only to `fsspec-tools`, and these repository permissions:
+
+- Contents: read and write, for release branches, changelogs, tags, and releases.
+- Pull requests: read and write, for release PRs and their descriptions.
+- Issues: read and write, for release-please labels.
+
+Add it as `RELEASE_PLEASE_TOKEN` in the repository's Actions secrets. If the
+organization requires token approval, an organization owner must approve it.
+Record its expiration and rotate the secret before it expires. Do not place the
+token in repository files or share it in an issue, PR, or chat.
+
+Use the same secret for both steps that change release PRs; leaving the
+note-correction step on `GITHUB_TOKEN` would trigger another approval-required
+CI run. Publication dispatch continues to use `GITHUB_TOKEN`, since explicit
+repository-dispatch events run automatically. PyPI authentication still uses OIDC.
 
 The one-time `bootstrap-sha` maps the last pre-relicensing formatting commit into
 the reconstructed history. Release-please must include the unreleased license,

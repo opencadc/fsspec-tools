@@ -22,10 +22,20 @@ jobs:
       pull-requests: write
       issues: write
     steps:
+      - name: Require the release automation token
+        env:
+          RELEASE_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+        run: |
+          if [[ -z "$RELEASE_TOKEN" ]]; then
+            echo "::error::Set RELEASE_PLEASE_TOKEN to a repository-scoped token with contents, pull requests, and issues write access."
+            exit 1
+          fi
+
       - name: Open release pull requests and cut releases
         id: release
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
@@ -38,7 +48,7 @@ jobs:
       - name: Preserve source links in the first release notes
         if: steps.release.outputs.prs_created == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           RELEASE_PRS: ${{ steps.release.outputs.prs }}
         run: python tools/release_notes.py
 
