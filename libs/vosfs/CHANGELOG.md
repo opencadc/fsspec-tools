@@ -1,5 +1,43 @@
 # Changelog
 
+## [0.12.0](https://github.com/opencadc/fsspec-tools/compare/v0.11.0...vosfs-v0.12.0) (2026-10-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **vosfs,fss-cli:** User paths are literal. Percent escapes are no longer decoded by strip_protocol; callers must pass spaces and other filename characters literally. Server-returned node URIs are still decoded once.
+* **fss-cli:** the distribution is now fss-cli and the import package is fss_cli. Replace fsspec-cli with fss-cli in requirements, and fsspec_cli with fss_cli in imports and logging configuration. No compatibility alias is provided.
+* **vosfs,fss-cli:** vosfs and fsspec-cli are now distributed under the GNU Affero General Public License v3.0 or later. vosfs 0.11.0, fsspec-cli 0.10.0 and earlier releases remain under the BSD 3-Clause License.
+
+### Features
+
+* **fss-cli:** bold directory names in ls on a terminal ([#24](https://github.com/shinybrar/vostools/issues/24)) ([7c96d98](https://github.com/opencadc/fsspec-tools/commit/7c96d98fb8b5d78f215f3e7026295fb53c04c639))
+* **fss-cli:** report cp progress and wait for destination metadata ([#25](https://github.com/shinybrar/vostools/issues/25)) ([9fdba9c](https://github.com/opencadc/fsspec-tools/commit/9fdba9ce35cf7309ac9f6374d29706b607d4e0f0))
+
+
+### Bug Fixes
+
+* **vosfs,fss-cli:** preserve transfer fallbacks ([#27](https://github.com/shinybrar/vostools/issues/27)) ([ac2ef20](https://github.com/opencadc/fsspec-tools/commit/ac2ef2031b4d9134867f080f3ebf6b72f6389be0))
+* **vosfs:** encode literal paths in node and transfer URIs ([377006a](https://github.com/opencadc/fsspec-tools/commit/377006a2f278c3522f4aa5c0f82f530b24e4adc3))
+* **vosfs:** page container listings over the XML parse cap ([#23](https://github.com/shinybrar/vostools/issues/23)) ([5870d6c](https://github.com/opencadc/fsspec-tools/commit/5870d6c7827b81e5199ce16a895371981ac5705a))
+* **vosfs:** release metadata indexes during cache invalidation ([936d3b9](https://github.com/opencadc/fsspec-tools/commit/936d3b9ff893a8cf1a3ef5e02f51d295c8fbf5ed))
+
+
+### Documentation
+
+* **repo:** share the package site and configure Pages deployment ([ce0e0a6](https://github.com/opencadc/fsspec-tools/commit/ce0e0a60f887b387bf5d4c75fd4d06576b608ff4))
+* **vosfs,fss-cli:** clarify package guides and internal documentation ([2809d38](https://github.com/opencadc/fsspec-tools/commit/2809d38c3ad50569d8faa0e3b95ce599ecbf9b24))
+
+
+### Code Refactoring
+
+* **fss-cli:** rename fsspec-cli to fss-cli ([#19](https://github.com/shinybrar/vostools/issues/19)) ([1346833](https://github.com/opencadc/fsspec-tools/commit/1346833371e38a59bc2f13b4ecd1892393f668ee))
+
+
+### Build System
+
+* **vosfs,fss-cli:** relicense under AGPL-3.0-or-later ([#18](https://github.com/shinybrar/vostools/issues/18)) ([c133a74](https://github.com/opencadc/fsspec-tools/commit/c133a74e23cd9230b9fe2dc30ef80b10c81c8bf7))
+
 ## [Unreleased]
 
 ### ⚠ BREAKING CHANGES
