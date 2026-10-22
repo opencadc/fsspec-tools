@@ -23,7 +23,8 @@ def inspect_distributions(directory: Path, package: str, version: str) -> dict[s
     if package not in PACKAGES or re.fullmatch(r"[0-9]+\.[0-9]+\.[0-9]+", version) is None:
         msg = "expected a supported package and a stable X.Y.Z version"
         raise ValueError(msg)
-    files = list(directory.iterdir())
+    # uv creates this marker beside the distributions in its output directory.
+    files = [path for path in directory.iterdir() if path.name != ".gitignore"]
     wheels = [path for path in files if path.suffix == ".whl"]
     sdists = [path for path in files if path.name.endswith(".tar.gz")]
     if len(wheels) != 1 or len(sdists) != 1 or len(files) != len(wheels) + len(sdists):
