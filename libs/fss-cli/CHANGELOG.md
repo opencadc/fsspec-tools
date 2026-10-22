@@ -63,6 +63,13 @@
 * Parameterize private command orchestration with concrete command labels
   without adding a supported command or public runner.
 
+## [0.11.1](https://github.com/opencadc/fsspec-tools/compare/fss-cli-v0.11.0...fss-cli-v0.11.1) (2026-10-22)
+
+
+### Bug Fixes
+
+* **repo:** repair and simplify PyPI release publishing ([f74a46f](https://github.com/opencadc/fsspec-tools/commit/f74a46ffe0bef3b3833c1d6602e757df9be4d8b4))
+
 ## [0.11.0](https://github.com/opencadc/fsspec-tools/compare/fss-cli-v0.10.0...fss-cli-v0.11.0) (2026-10-22)
 
 

@@ -696,7 +696,7 @@ wheels = [
 
 [[package]]
 name = "fss-cli"
-version = "0.11.0"
+version = "0.11.1"
 source = { editable = "libs/fss-cli" }
 dependencies = [
     { name = "fsspec" },
