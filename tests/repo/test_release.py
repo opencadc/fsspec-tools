@@ -53,7 +53,7 @@ def test_each_package_updates_its_own_version_and_lock_entry(path: str, componen
 
 def test_release_automation_is_disabled_until_explicitly_enabled() -> None:
     job = workflow("cd.yml")["jobs"]["release-please"]
-    assert job["if"] == f"{UPSTREAM_GUARD} && vars.RELEASE_ENABLED == 'true'"
+    assert job["if"] == f"{UPSTREAM_GUARD} && github.ref == 'refs/heads/main' && vars.RELEASE_ENABLED == 'true'"
     release = next(step for step in job["steps"] if step.get("id") == "release")
     assert "token" not in release["with"]
     dispatch = next(step for step in job["steps"] if step["name"] == "Dispatch each released package")

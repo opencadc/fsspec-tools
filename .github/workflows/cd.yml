@@ -15,7 +15,7 @@ concurrency:
 jobs:
   release-please:
     name: Release Please
-    if: github.repository == 'opencadc/fsspec-tools' && vars.RELEASE_ENABLED == 'true'
+    if: github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' && vars.RELEASE_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
