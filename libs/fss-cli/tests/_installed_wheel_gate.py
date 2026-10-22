@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import zipfile
 from pathlib import Path
 
 _REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
@@ -106,6 +107,7 @@ def _build_artifacts(
         [
             uv,
             "build",
+            "--no-sources",
             "--package",
             "fss-cli",
             "--wheel",
@@ -119,6 +121,7 @@ def _build_artifacts(
         [
             uv,
             "build",
+            "--no-sources",
             "--package",
             "fss-cli",
             "--sdist",
@@ -132,6 +135,7 @@ def _build_artifacts(
         [
             uv,
             "build",
+            "--no-sources",
             "--package",
             "vosfs",
             "--wheel",
@@ -149,6 +153,7 @@ def _build_artifacts(
         [
             uv,
             "build",
+            "--no-sources",
             "--wheel",
             "--out-dir",
             str(rebuilt_dist),
@@ -157,8 +162,47 @@ def _build_artifacts(
         cwd=root,
         environment=environment,
     )
-    _only_artifact(rebuilt_dist, "fss_cli-*.whl")
-    return cli_wheel, cli_sdist, vosfs_wheel
+    rebuilt_cli = _only_artifact(rebuilt_dist, "fss_cli-*.whl")
+    _compare_wheels(cli_wheel, rebuilt_cli)
+    _run(
+        [uv, "build", "--no-sources", "--package", "vosfs", "--sdist", "--out-dir", str(vosfs_dist)],
+        cwd=_REPOSITORY_ROOT,
+        environment=environment,
+    )
+    vosfs_sdist = _only_artifact(vosfs_dist, "vosfs-*.tar.gz")
+    rebuilt_vosfs_dir = root / "dist" / "vosfs-from-sdist"
+    _run(
+        [uv, "build", "--no-sources", "--wheel", "--out-dir", str(rebuilt_vosfs_dir), str(vosfs_sdist)],
+        cwd=root,
+        environment=environment,
+    )
+    rebuilt_vosfs = _only_artifact(rebuilt_vosfs_dir, "vosfs-*.whl")
+    _compare_wheels(vosfs_wheel, rebuilt_vosfs)
+    return rebuilt_cli, cli_sdist, rebuilt_vosfs
+
+
+def _compare_wheels(original: Path, rebuilt: Path) -> None:
+    with zipfile.ZipFile(original) as first, zipfile.ZipFile(rebuilt) as second:
+        original_files = {name: first.read(name) for name in first.namelist()}
+        rebuilt_files = {name: second.read(name) for name in second.namelist()}
+    # uv may use its bundled backend for the source build and a newer compatible
+    # backend for the sdist. Only the generator and its RECORD hash may differ.
+    for files in (original_files, rebuilt_files):
+        for name in list(files):
+            if name.endswith(".dist-info/RECORD"):
+                del files[name]
+            elif name.endswith(".dist-info/WHEEL"):
+                files[name] = b"".join(
+                    line for line in files[name].splitlines(keepends=True) if not line.startswith(b"Generator:")
+                )
+    if original_files != rebuilt_files:
+        differences = sorted(
+            name
+            for name in original_files.keys() | rebuilt_files.keys()
+            if original_files.get(name) != rebuilt_files.get(name)
+        )
+        message = f"sdist rebuild differs from the source wheel: {original.name}: {differences}"
+        raise RuntimeError(message)
 
 
 def _extract_tests(source_distribution: Path, root: Path) -> Path:

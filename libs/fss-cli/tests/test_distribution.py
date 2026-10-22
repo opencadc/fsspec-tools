@@ -52,7 +52,8 @@ def test_distribution_has_only_locked_runtime_metadata() -> None:
         for requirement in installed.requires or ()
     }
 
-    assert requirements == {"fsspec", "typer"}
+    assert requirements == {"fsspec", "rich", "typer"}
+    assert installed.metadata["License-Expression"] == "AGPL-3.0-or-later"
     assert [entry_point for entry_point in installed.entry_points if entry_point.group == "console_scripts"] == []
 
 
@@ -103,6 +104,10 @@ def test_vosfs_integration_uses_a_separately_installed_wheel() -> None:
 
     wheel = Path(wheel_value).resolve()
     installed = distribution("vosfs")
+    assert installed.metadata["License-Expression"] == "AGPL-3.0-or-later"
+    assert {(entry.name, entry.value) for entry in installed.entry_points if entry.group == "fsspec.specs"} == {
+        ("vos", "vosfs:VOSpaceFileSystem"),
+    }
     direct_url_text = installed.read_text("direct_url.json")
     assert direct_url_text is not None
     direct_url = json.loads(direct_url_text)

@@ -1,6 +1,10 @@
 """Static contracts for the GitHub Actions workflows."""
 
+import json
+import os
 import re
+import shutil
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -8,20 +12,8 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 WORKFLOWS = sorted((ROOT / ".github" / "workflows").glob("*.yml"))
-QUALITY = ROOT / ".github" / "workflows" / "quality.yml"
-PACKAGE_WORKFLOWS = {
-    "vos": ROOT / ".github" / "workflows" / "ci-vos.yml",
-    "vosfs": ROOT / ".github" / "workflows" / "ci-vosfs.yml",
-    "fss-cli": ROOT / ".github" / "workflows" / "ci-fss-cli.yml",
-}
-SHARED_PATHS = {
-    "pyproject.toml",
-    "uv.lock",
-    ".pre-commit-config.yaml",
-    ".github/**",
-    "tests/repo/**",
-}
-UPSTREAM_GUARD = "github.repository == 'opencadc/vostools'"
+QUALITY = ROOT / ".github" / "workflows" / "ci.yml"
+UPSTREAM_GUARD = "github.repository == 'opencadc/fsspec-tools'"
 PINNED = re.compile(r"^[\w.-]+/[\w./-]+@[0-9a-f]{40}$")
 
 
@@ -47,12 +39,7 @@ def test_third_party_actions_are_pinned_to_a_commit(path: Path) -> None:
 
 @pytest.mark.parametrize("path", WORKFLOWS, ids=lambda path: path.name)
 def test_workflows_declare_expected_default_permissions(path: Path) -> None:
-    expected = (
-        {"contents": "write", "issues": "write", "pull-requests": "write"}
-        if path.name == "cd.yml"
-        else {"contents": "read"}
-    )
-    assert load(path)["permissions"] == expected
+    assert load(path)["permissions"] == {"contents": "read"}
 
 
 @pytest.mark.parametrize("path", WORKFLOWS, ids=lambda path: path.name)
@@ -85,13 +72,12 @@ def test_quality_always_runs_and_exposes_required() -> None:
     jobs = workflow["jobs"]
 
     assert "pull_request" in on
-    assert on["push"]["branches"] == ["main"]
+    assert on["push"]["branches"] == ["main", "migration/**"]
     assert on["schedule"]
     assert "workflow_dispatch" in on
-    assert "workflow_call" in on
     assert "paths" not in on.get("pull_request", {})
     assert jobs["required"]["if"] == "always()"
-    assert set(jobs["required"]["needs"]) == {"quality", "pr-title"}
+    assert set(jobs["required"]["needs"]) == {"quality", "pr-title", "vosfs", "fss-cli", "artifacts"}
 
 
 def test_quality_runs_contract_tests_and_docs() -> None:
@@ -102,21 +88,43 @@ def test_quality_runs_contract_tests_and_docs() -> None:
     assert "uv build --no-sources --all-packages" in text
 
 
-@pytest.mark.parametrize(("package", "path"), PACKAGE_WORKFLOWS.items())
-def test_package_workflow_uses_path_filters(package: str, path: Path) -> None:
-    on = triggers(load(path))
-    distribution = package
+@pytest.mark.parametrize(
+    ("job", "result", "event", "success"),
+    [
+        ("quality", "success", "pull_request", True),
+        ("quality", "failure", "pull_request", False),
+        ("vosfs", "failure", "pull_request", False),
+        ("fss-cli", "failure", "pull_request", False),
+        ("artifacts", "failure", "pull_request", False),
+        ("vosfs", "cancelled", "pull_request", False),
+        ("fss-cli", "skipped", "push", False),
+        ("pr-title", "skipped", "pull_request", False),
+        ("pr-title", "skipped", "push", True),
+    ],
+)
+def test_required_fails_when_any_applicable_job_does_not_pass(job: str, result: str, event: str, success: bool) -> None:
+    required = load(QUALITY)["jobs"]["required"]
+    results = {name: {"result": "success"} for name in required["needs"]}
+    results[job]["result"] = result
+    bash = shutil.which("bash")
+    assert bash is not None
+    completed = subprocess.run(  # noqa: S603 - execute the repository workflow with synthetic job results.
+        [bash, "-c", required["steps"][0]["run"]],
+        env={**os.environ, "RESULTS": json.dumps(results), "EVENT": event},
+        capture_output=True,
+        check=False,
+        timeout=10,
+    )
+    assert (completed.returncode == 0) is success
 
-    for event in ("pull_request", "push"):
-        paths = set(on[event]["paths"])
-        assert f"libs/{package}/**" in paths
-        assert paths >= SHARED_PATHS
-        if package == "fss-cli":
-            assert "libs/vosfs/**" in paths
-    assert load(path)["jobs"]["test"]["with"] == {
-        "package": package,
-        "distribution": distribution,
+
+def test_package_matrix_covers_supported_platforms() -> None:
+    matrix = load(ROOT / ".github/workflows/reusable-package.yml")["jobs"]["test"]["strategy"]["matrix"]["include"]
+    assert {(entry["os"], entry["python"]) for entry in matrix} == {
+        *(("ubuntu-latest", f"3.{minor}") for minor in range(10, 15)),
+        ("macos-latest", "3.12"),
     }
+    assert "_installed_wheel_gate.py" in QUALITY.read_text()
 
 
 def test_no_custom_github_scripts() -> None:

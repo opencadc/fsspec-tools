@@ -1,19 +1,25 @@
-"""Contracts for the workspace packages that CI path filters cover."""
+"""Contracts for the two independently distributed workspace packages."""
 
 import re
 import tomllib
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_every_libs_directory_has_a_package_workflow() -> None:
+def test_every_workspace_member_has_a_required_package_job() -> None:
+    config = tomllib.loads((ROOT / "pyproject.toml").read_text())
     packages = {path.parent.name for path in ROOT.glob("libs/*/pyproject.toml")}
-    workflows = {
-        path.name.removeprefix("ci-").removesuffix(".yml") for path in (ROOT / ".github" / "workflows").glob("ci-*.yml")
-    }
+    workflow = yaml.safe_load((ROOT / ".github/workflows/ci.yml").read_text())
+    jobs = workflow["jobs"]
+    tested = {job["with"]["package"] for job in jobs.values() if job.get("uses", "").endswith("reusable-package.yml")}
 
-    assert packages == workflows == {"vos", "vosfs", "fss-cli"}
+    assert packages == tested == {"vosfs", "fss-cli"}
+    assert config["tool"]["uv"]["package"] is False
+    assert set(config["tool"]["uv"]["workspace"]["members"]) == {"libs/vosfs", "libs/fss-cli"}
+    assert tested <= set(jobs["required"]["needs"])
 
 
 def test_fss_cli_depends_on_vosfs_for_tests() -> None:
@@ -27,7 +33,7 @@ def test_commit_scopes_name_every_package() -> None:
     pattern = tomllib.loads((ROOT / "pyproject.toml").read_text())["tool"]["commitizen"]["customize"]["schema_pattern"]
     scopes = set(re.search(r"\\\(\(([^)]*)\)", pattern).group(1).split("|"))
 
-    assert scopes == {"vos", "vosfs", "fss-cli", "repo"}
+    assert scopes == {"vosfs", "fss-cli", "repo"}
 
 
 def test_every_package_supports_the_ci_python_range() -> None:
