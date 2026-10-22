@@ -1,5 +1,8 @@
 """Tests for VOSpace namespace and mutation primitives (section 10)."""
 
+import gc
+import weakref
+
 import httpx
 import pytest
 import respx
@@ -264,3 +267,24 @@ def test_invalidate_cache_clears_path_or_all_without_io(router: respx.Router) ->
     assert list(fs.dircache) == []
     assert len(router.calls) == 0
     fs.close()
+
+
+@pytest.mark.parametrize("path", [None, "/", "/tree", "/tree/file", "/other"])
+def test_invalidate_cache_releases_cached_metadata(router: respx.Router, path: str | None) -> None:
+    class Metadata(dict):
+        pass
+
+    fs = make_fs(router)
+    metadata = Metadata(name="/tree/file", type="file", size=4)
+    reference = weakref.ref(metadata)
+    fs.dircache["/tree"] = [metadata]
+    del metadata
+    try:
+        assert fs.info("/tree/file")["size"] == 4
+        fs.invalidate_cache(path)
+        gc.collect()
+        assert (reference() is None) == (path != "/other")
+        assert len(router.calls) == 0
+    finally:
+        fs.invalidate_cache()
+        fs.close()

@@ -451,6 +451,7 @@ class VOSpaceFileSystem(AsyncFileSystem):
             return await self._load_listing(path)
         except BaseException:
             self.dircache.pop(path, None)
+            self._listing_indexes.pop(path, None)
             raise
 
     async def _load_listing(self, path: str) -> list[dict[str, Any]]:
@@ -1344,14 +1345,20 @@ class VOSpaceFileSystem(AsyncFileSystem):
         """
         prefix = "/" if path == "/" else f"{path}/"
         parent = paths.parent(path)
-        stale = [entry for entry in list(self.dircache) if entry in (path, parent) or entry.startswith(prefix)]
+        stale = [
+            entry
+            for entry in self.dircache.keys() | self._listing_indexes.keys()
+            if entry in (path, parent) or entry.startswith(prefix)
+        ]
         for entry in stale:
             self.dircache.pop(entry, None)
+            self._listing_indexes.pop(entry, None)
 
     def invalidate_cache(self, path: str | None = None) -> None:
         """Clear all directory state, or one path, its subtree, and parent."""
         if path is None:
             self.dircache.clear()
+            self._listing_indexes.clear()
         else:
             self._invalidate(self._strip_protocol(path))
 

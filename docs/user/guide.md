@@ -458,6 +458,10 @@ logging.getLogger("vosfs").setLevel(logging.DEBUG)
 
 ## Closing
 
+Use `fs.invalidate_cache(path)` to discard cached listings and metadata indexes
+for that path, its descendants, and its parent. Omit `path` to clear all cached
+directory metadata.
+
 `aclose()` (async) and `close()` (sync) release every HTTP client, evict the
 instance from fsspec's cache, and make later I/O fail as closed. Both calls are
 idempotent.
