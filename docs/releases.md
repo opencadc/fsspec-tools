@@ -52,7 +52,9 @@ changing the generated body.
 
 ## Normal releases
 
-Release-please runs on main and opens one PR per changed component. Its Python
+Release-please runs automatically on every push to `main`, including PR merges.
+PR creation and synchronization do not trigger it; it has no manual trigger.
+It opens one PR per changed component. Its Python
 strategy updates the package metadata and changelog; configured extra files
 update that package's lockfile version. CI checks the lock remains consistent.
 
