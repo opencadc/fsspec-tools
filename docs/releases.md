@@ -41,8 +41,15 @@ historical fss-cli 0.10.0 release to make a comparison link work.
 The one-time `bootstrap-sha` maps the last pre-relicensing formatting commit into
 the reconstructed history. Release-please must include the unreleased license,
 rename, and transfer changes. Once both components have a successful release,
-the bootstrap entry can be removed. Do not replace it with `last-release-sha`,
+the bootstrap entry and temporary `migration_notes.py` workflow step/tool/tests
+can be removed. Do not replace the bootstrap with `last-release-sha`,
 which would keep overriding future release boundaries.
+
+The temporary migration-note correction runs after each initial release PR is
+created or updated. It uses actual historical comparison tags and the recorded
+commit origins to preserve source issue/PR links, and corrects both the generated
+PR body and its new changelog section. It leaves later releases and older
+changelog sections untouched.
 
 ## Normal releases
 

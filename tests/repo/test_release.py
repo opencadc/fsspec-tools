@@ -56,10 +56,13 @@ def test_release_automation_is_disabled_until_explicitly_enabled() -> None:
     assert job["if"] == f"{UPSTREAM_GUARD} && vars.RELEASE_ENABLED == 'true'"
     release = next(step for step in job["steps"] if step.get("id") == "release")
     assert "token" not in release["with"]
-    dispatch = next(step for step in job["steps"] if step.get("run"))
+    dispatch = next(step for step in job["steps"] if step["name"] == "Dispatch each released package")
     assert dispatch["env"]["GH_TOKEN"] == "${{ secrets.GITHUB_TOKEN }}"
     assert "pypi-release" in dispatch["run"]
     assert "docs-publish" not in dispatch["run"]
+    correction = next(step for step in job["steps"] if step.get("run") == "python tools/migration_notes.py")
+    assert correction["if"] == "steps.release.outputs.prs_created == 'true'"
+    assert correction["env"]["RELEASE_PRS"] == "${{ steps.release.outputs.prs }}"
     assert "^libs/(vosfs|fss-cli)$" in dispatch["run"]
 
 

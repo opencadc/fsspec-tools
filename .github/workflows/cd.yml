@@ -30,6 +30,19 @@ jobs:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
+      - name: Check out migration provenance
+        if: steps.release.outputs.prs_created == 'true'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Preserve source links in the first release notes
+        if: steps.release.outputs.prs_created == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_PRS: ${{ steps.release.outputs.prs }}
+        run: python tools/migration_notes.py
+
       - name: Dispatch each released package
         if: "success() && github.repository == 'opencadc/fsspec-tools'"
         env:
