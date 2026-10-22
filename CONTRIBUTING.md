@@ -73,7 +73,7 @@ or rebasing it would disconnect the imported development history from main.
 
 ## Releases
 
-[The release guide](docs/releases.md) describes independent release-please PRs,
-PyPI Trusted Publishers, the initial publishing gates, TestPyPI, and recovery.
+[Publishing setup](docs/releases.md) describes the dependent publishing PR and
+the post-merge activation requirements.
 Keep historical `v*` and `fsspec-cli-v*` tags unchanged; future releases use
 `vosfs-vX.Y.Z` and `fss-cli-vX.Y.Z`.

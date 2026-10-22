@@ -1,0 +1,697 @@
+[
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 352203854,
+    "tag": "v0.2.0",
+    "name": "v0.2.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.2.0",
+    "source_created_at": "2026-07-10T16:13:28Z",
+    "source_published_at": "2026-07-10T16:15:14Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420447248,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.2.0",
+    "assets": [
+      {
+        "name": "vosfs-0.2.0-py3-none-any.whl",
+        "size": 1664,
+        "digest": "sha256:f14891252e8227fd2ed9aebd28aafd7fb3256be0834f918432ac3f20eb195650",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.2.0/vosfs-0.2.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-edc8ac2a2af7ca1b29a4/vosfs-0.2.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.2.0.tar.gz",
+        "size": 2142,
+        "digest": "sha256:c8887a38f365c7d3b57704ed24d76d47d5a59752f3e166532f40b51971e155d1",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.2.0/vosfs-0.2.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-edc8ac2a2af7ca1b29a4/vosfs-0.2.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 352580627,
+    "tag": "v0.3.0",
+    "name": "v0.3.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.3.0",
+    "source_created_at": "2026-07-11T18:28:29Z",
+    "source_published_at": "2026-07-11T18:30:04Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420447396,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.3.0",
+    "assets": []
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 354032751,
+    "tag": "v0.3.2",
+    "name": "v0.3.2",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.3.2",
+    "source_created_at": "2026-07-14T19:32:46Z",
+    "source_published_at": "2026-07-14T19:34:32Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420447421,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.3.2",
+    "assets": [
+      {
+        "name": "vosfs-0.3.2-py3-none-any.whl",
+        "size": 36501,
+        "digest": "sha256:4331f9d2dd5775c6b22c12c9b5e12d3c74ace33a193a62529897f740278feaff",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.3.2/vosfs-0.3.2-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-bc028130d9bfcb3a3af4/vosfs-0.3.2-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.3.2.tar.gz",
+        "size": 31927,
+        "digest": "sha256:965b4f46ee224e3f1ca12ef99c059aad4efe9857c3dbac2cca5e36dbb0d3f28b",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.3.2/vosfs-0.3.2.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-bc028130d9bfcb3a3af4/vosfs-0.3.2.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 354038830,
+    "tag": "v0.3.3",
+    "name": "v0.3.3",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.3.3",
+    "source_created_at": "2026-07-14T19:45:29Z",
+    "source_published_at": "2026-07-14T19:47:45Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420447560,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.3.3",
+    "assets": [
+      {
+        "name": "vosfs-0.3.3-py3-none-any.whl",
+        "size": 36501,
+        "digest": "sha256:a1748d98f3349013712d9c0696acc07869e24144f72ce57f708a3bf5e7aca04c",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.3.3/vosfs-0.3.3-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-abfe0e9df7ef2deae97f/vosfs-0.3.3-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.3.3.tar.gz",
+        "size": 31912,
+        "digest": "sha256:d254f37662fa8d0ca9582d4cce846d2cd1653dcc22f6581aae45e69273f1c818",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.3.3/vosfs-0.3.3.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-abfe0e9df7ef2deae97f/vosfs-0.3.3.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 355532593,
+    "tag": "fsspec-cli-v0.1.0",
+    "name": "fsspec-cli: v0.1.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.1.0",
+    "source_created_at": "2026-07-17T22:55:49Z",
+    "source_published_at": "2026-07-17T23:01:11Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420447691,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.1.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.1.0-py3-none-any.whl",
+        "size": 20709,
+        "digest": "sha256:e0f8739478e8e01e3609c25d353282383b57991953f3785cd753d544ec57247a",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.1.0/fsspec_cli-0.1.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d70f7d32b65189d7a914/fsspec_cli-0.1.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.1.0.tar.gz",
+        "size": 47529,
+        "digest": "sha256:086a60becd20683e41cfc88e6df8f20058c7d847ed35b7102babb1f7d46c8811",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.1.0/fsspec_cli-0.1.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d70f7d32b65189d7a914/fsspec_cli-0.1.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 355540498,
+    "tag": "fsspec-cli-v0.1.1",
+    "name": "fsspec-cli: v0.1.1",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.1.1",
+    "source_created_at": "2026-07-17T22:55:49Z",
+    "source_published_at": "2026-07-17T23:01:12Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420447851,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.1.1",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.1.1-py3-none-any.whl",
+        "size": 20715,
+        "digest": "sha256:d498756881177cf657632aec3e96657a3c741e18a1a9b3005b1ff26ae3eb45cb",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.1.1/fsspec_cli-0.1.1-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-69e27f031504611ab5d1/fsspec_cli-0.1.1-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.1.1.tar.gz",
+        "size": 47569,
+        "digest": "sha256:7569b1c6c3143ecb2a961caf89b9958f4b2c77a6a4a00393150543f6ac780e2e",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.1.1/fsspec_cli-0.1.1.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-69e27f031504611ab5d1/fsspec_cli-0.1.1.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 355961058,
+    "tag": "fsspec-cli-v0.2.0",
+    "name": "fsspec-cli: v0.2.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.2.0",
+    "source_created_at": "2026-07-17T23:10:09Z",
+    "source_published_at": "2026-07-17T23:12:13Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448013,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.2.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.2.0-py3-none-any.whl",
+        "size": 51652,
+        "digest": "sha256:901a4f20e7d075010145ea00998e042a32685e9fd9ef4e768375f609d40c1f08",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.2.0/fsspec_cli-0.2.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-f2d92c90736eb892ccc5/fsspec_cli-0.2.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.2.0.tar.gz",
+        "size": 119529,
+        "digest": "sha256:609ec4a2b90a9318959f08f7bd07986b8c97bf7aab6d427eda637c9da2b41ff7",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.2.0/fsspec_cli-0.2.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-f2d92c90736eb892ccc5/fsspec_cli-0.2.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 355532598,
+    "tag": "v0.4.0",
+    "name": "v0.4.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.4.0",
+    "source_created_at": "2026-07-17T07:26:56Z",
+    "source_published_at": "2026-07-17T07:29:33Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448162,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.4.0",
+    "assets": [
+      {
+        "name": "vosfs-0.4.0-py3-none-any.whl",
+        "size": 36500,
+        "digest": "sha256:8ddb6422df226beaba97fbb131439efde55a186d7c0baa9286463f0948ba31a4",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.4.0/vosfs-0.4.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-5e07a0519158fc10decc/vosfs-0.4.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.4.0.tar.gz",
+        "size": 31960,
+        "digest": "sha256:971a34a812f69dc947376fcf7779585745b8c9d6d270b3390a45c84fc45d0cfc",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.4.0/vosfs-0.4.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-5e07a0519158fc10decc/vosfs-0.4.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 356121946,
+    "tag": "fsspec-cli-v0.2.1",
+    "name": "fsspec-cli: v0.2.1",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.2.1",
+    "source_created_at": "2026-07-18T13:51:43Z",
+    "source_published_at": "2026-07-18T14:40:45Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448314,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.2.1",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.2.1-py3-none-any.whl",
+        "size": 37594,
+        "digest": "sha256:e0607b7e47a891f183642df0489959b6e6501c260cce4177e7f98b74359e4c02",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.2.1/fsspec_cli-0.2.1-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-1339195d1d2f8987b624/fsspec_cli-0.2.1-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.2.1.tar.gz",
+        "size": 104624,
+        "digest": "sha256:bcd7fb1e408f1134fc10c29859b84f1f991d8502932b03b963b4917088046ac4",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.2.1/fsspec_cli-0.2.1.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-1339195d1d2f8987b624/fsspec_cli-0.2.1.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 357063746,
+    "tag": "fsspec-cli-v0.3.0",
+    "name": "fsspec-cli: v0.3.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.3.0",
+    "source_created_at": "2026-07-21T01:11:14Z",
+    "source_published_at": "2026-07-21T01:24:29Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448439,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.3.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.3.0-py3-none-any.whl",
+        "size": 55649,
+        "digest": "sha256:cb2441b710fcff4f5e6c556bdfe2ba9f68393e0b340ccc87b42fc7e75e17c5b9",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.3.0/fsspec_cli-0.3.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-988391a55b8a2cdf2f6b/fsspec_cli-0.3.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.3.0.tar.gz",
+        "size": 142225,
+        "digest": "sha256:fbdd3b50395c12b7faa37434c061b3dc7d63ffadc4c01ffb35dd0a7dc1c4ea15",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.3.0/fsspec_cli-0.3.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-988391a55b8a2cdf2f6b/fsspec_cli-0.3.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 357509156,
+    "tag": "fsspec-cli-v0.4.0",
+    "name": "fsspec-cli: v0.4.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.4.0",
+    "source_created_at": "2026-07-21T17:14:44Z",
+    "source_published_at": "2026-07-21T17:15:25Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448577,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.4.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.4.0-py3-none-any.whl",
+        "size": 55768,
+        "digest": "sha256:5638669c0f7f8b9eb16b3b96a22649508592e0b4990a0b2910fc2c0526b29b33",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.4.0/fsspec_cli-0.4.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d5ea1444b529e23eb18e/fsspec_cli-0.4.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.4.0.tar.gz",
+        "size": 142946,
+        "digest": "sha256:2b2a387a55f9edf693e2acaa717467481c0e2062983babc182a669fa3b49818c",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.4.0/fsspec_cli-0.4.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d5ea1444b529e23eb18e/fsspec_cli-0.4.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 357507733,
+    "tag": "v0.5.0",
+    "name": "v0.5.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.5.0",
+    "source_created_at": "2026-07-21T17:11:58Z",
+    "source_published_at": "2026-07-21T17:12:29Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448733,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.5.0",
+    "assets": [
+      {
+        "name": "vosfs-0.5.0-py3-none-any.whl",
+        "size": 48072,
+        "digest": "sha256:8b7504f2d2577dce205f2cc0487bc745690d2520bbccd92eca669da229187581",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.5.0/vosfs-0.5.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-2d90d0c5db2cbba7018e/vosfs-0.5.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.5.0.tar.gz",
+        "size": 43544,
+        "digest": "sha256:9d1f4bf3821d37634c91d12bff0852494a8424cfe3368f9510b84cb7af29407f",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.5.0/vosfs-0.5.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-2d90d0c5db2cbba7018e/vosfs-0.5.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 358242520,
+    "tag": "fsspec-cli-v0.5.0",
+    "name": "fsspec-cli: v0.5.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.5.0",
+    "source_created_at": "2026-07-22T18:47:18Z",
+    "source_published_at": "2026-07-22T18:47:46Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420448870,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.5.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.5.0-py3-none-any.whl",
+        "size": 66971,
+        "digest": "sha256:8467f24a11ef22b13e0b4c112d80af43484d05a3c50a5dfc41a104a058ffcf6c",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.5.0/fsspec_cli-0.5.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-662c7c4cfad7f88ca76d/fsspec_cli-0.5.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.5.0.tar.gz",
+        "size": 172679,
+        "digest": "sha256:9be087aac1d7a537682e3052380b87191f4c39d871abb02d869a810c54350cee",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.5.0/fsspec_cli-0.5.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-662c7c4cfad7f88ca76d/fsspec_cli-0.5.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 358241265,
+    "tag": "v0.6.0",
+    "name": "v0.6.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.6.0",
+    "source_created_at": "2026-07-22T18:44:50Z",
+    "source_published_at": "2026-07-22T18:45:25Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449043,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.6.0",
+    "assets": [
+      {
+        "name": "vosfs-0.6.0-py3-none-any.whl",
+        "size": 49968,
+        "digest": "sha256:28eca3125c10d5d7444fbebb9a63426e82d30a47e8222352cc5eb0fe379b14bc",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.6.0/vosfs-0.6.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-ffe54e4a84c48ea12633/vosfs-0.6.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.6.0.tar.gz",
+        "size": 45046,
+        "digest": "sha256:89d931d73ec52c16bc3d0a788769fba5fa710dce4c3eed23760c559d2772c56b",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.6.0/vosfs-0.6.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-ffe54e4a84c48ea12633/vosfs-0.6.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 359613977,
+    "tag": "fsspec-cli-v0.6.0",
+    "name": "fsspec-cli: v0.6.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.6.0",
+    "source_created_at": "2026-07-25T00:51:47Z",
+    "source_published_at": "2026-07-25T00:52:16Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449180,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.6.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.6.0-py3-none-any.whl",
+        "size": 58745,
+        "digest": "sha256:7d93653c3cfd609ffc4baf8a45364ff12af1e83a4ee30dd10d4dd819aa89c2ff",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.6.0/fsspec_cli-0.6.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-91f6c57e11ff9c7c5b4a/fsspec_cli-0.6.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.6.0.tar.gz",
+        "size": 175837,
+        "digest": "sha256:a3db2dd3f61fd3c8a7f931404ae2988f7f59bada6214809b788509aebd38ab73",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.6.0/fsspec_cli-0.6.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-91f6c57e11ff9c7c5b4a/fsspec_cli-0.6.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 359714494,
+    "tag": "fsspec-cli-v0.7.0",
+    "name": "fsspec-cli: v0.7.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.7.0",
+    "source_created_at": "2026-07-25T08:44:19Z",
+    "source_published_at": "2026-07-25T08:44:48Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449357,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.7.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.7.0-py3-none-any.whl",
+        "size": 58748,
+        "digest": "sha256:77d1bd750b2214edf2ab0887c3e45c2ee15abae85036a100f64da917d7795f8f",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.7.0/fsspec_cli-0.7.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d075804d48ba6c3b91a3/fsspec_cli-0.7.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.7.0.tar.gz",
+        "size": 176238,
+        "digest": "sha256:1843a58f0ff6f2e8dee69c6083127bd0e41a7aa7b9f6f9ee54147c2f81274cb6",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.7.0/fsspec_cli-0.7.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d075804d48ba6c3b91a3/fsspec_cli-0.7.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 359629605,
+    "tag": "v0.7.0",
+    "name": "v0.7.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.7.0",
+    "source_created_at": "2026-07-25T02:06:23Z",
+    "source_published_at": "2026-07-25T02:06:52Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449503,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.7.0",
+    "assets": [
+      {
+        "name": "vosfs-0.7.0-py3-none-any.whl",
+        "size": 54205,
+        "digest": "sha256:d896c57dd253836afcaab3c2144d0b38222d682182803cd816b018677f6edee4",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.7.0/vosfs-0.7.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d440f9e9282dcfa7de66/vosfs-0.7.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.7.0.tar.gz",
+        "size": 47100,
+        "digest": "sha256:551634ccf26023a682fe0fe2b6367031027e2d7e332208bc344734907d2692cc",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.7.0/vosfs-0.7.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-d440f9e9282dcfa7de66/vosfs-0.7.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 359714313,
+    "tag": "v0.8.0",
+    "name": "v0.8.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.8.0",
+    "source_created_at": "2026-07-25T08:43:20Z",
+    "source_published_at": "2026-07-25T08:43:51Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449656,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.8.0",
+    "assets": [
+      {
+        "name": "vosfs-0.8.0-py3-none-any.whl",
+        "size": 55895,
+        "digest": "sha256:0b8519a7e849d80b46c6e9493f153c394f65e601c1e80bfef6b7c24e48c6b59a",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.8.0/vosfs-0.8.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-5d2618615ad47b98c462/vosfs-0.8.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.8.0.tar.gz",
+        "size": 48719,
+        "digest": "sha256:9b3fd7f985447d850298d50457abd9a311e91523ddec62563945d623610010d0",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.8.0/vosfs-0.8.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-5d2618615ad47b98c462/vosfs-0.8.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 363453975,
+    "tag": "fsspec-cli-v0.8.0",
+    "name": "fsspec-cli: v0.8.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.8.0",
+    "source_created_at": "2026-08-01T06:55:43Z",
+    "source_published_at": "2026-08-01T06:56:38Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449792,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.8.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.8.0-py3-none-any.whl",
+        "size": 56509,
+        "digest": "sha256:a0b2d6eae421557da9df31c02de1c1c92738171639eddef27686917138eac9ec",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.8.0/fsspec_cli-0.8.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-19981bb6a9443b66a3b0/fsspec_cli-0.8.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.8.0.tar.gz",
+        "size": 170352,
+        "digest": "sha256:992fa37ed8ab281b7cd02df7cc00b4315265f837a1af89e3e5996cefd27c9a3e",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.8.0/fsspec_cli-0.8.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-19981bb6a9443b66a3b0/fsspec_cli-0.8.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 363453767,
+    "tag": "v0.9.0",
+    "name": "v0.9.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.9.0",
+    "source_created_at": "2026-08-01T06:54:11Z",
+    "source_published_at": "2026-08-01T06:55:08Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420449951,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.9.0",
+    "assets": [
+      {
+        "name": "vosfs-0.9.0-py3-none-any.whl",
+        "size": 53550,
+        "digest": "sha256:6325a87b0073ca5359a73c644ab9bb34436c83225d10e26a3def8fabd21b7f86",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.9.0/vosfs-0.9.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-4fbc210bd6fa85415149/vosfs-0.9.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.9.0.tar.gz",
+        "size": 46668,
+        "digest": "sha256:1f967bf45529b5cc10aacd589a681e055812673290a0b9177916b3603c2190ce",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.9.0/vosfs-0.9.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-4fbc210bd6fa85415149/vosfs-0.9.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 402116971,
+    "tag": "fsspec-cli-v0.9.0",
+    "name": "fsspec-cli: v0.9.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.9.0",
+    "source_created_at": "2026-10-02T19:59:37Z",
+    "source_published_at": "2026-10-02T20:00:49Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420450099,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.9.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.9.0-py3-none-any.whl",
+        "size": 59141,
+        "digest": "sha256:bedfa84c5a4f599d513325442709d069c7956a74b2092a3643ffae3bb9f21a39",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.9.0/fsspec_cli-0.9.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-9c066c7b6e7a993b3990/fsspec_cli-0.9.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.9.0.tar.gz",
+        "size": 170258,
+        "digest": "sha256:05b5d3761ca52b1f90a2f4c75773e608afcbabba06f8bcae4bba6c15471908e4",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.9.0/fsspec_cli-0.9.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-9c066c7b6e7a993b3990/fsspec_cli-0.9.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 402106977,
+    "tag": "v0.10.0",
+    "name": "v0.10.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.10.0",
+    "source_created_at": "2026-10-02T19:43:26Z",
+    "source_published_at": "2026-10-02T19:44:08Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420450253,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.10.0",
+    "assets": [
+      {
+        "name": "vosfs-0.10.0-py3-none-any.whl",
+        "size": 55221,
+        "digest": "sha256:ecad0243b7ae1b8c927c8f0fa5c73f4dc802b42d856c8161aaaec4228f555e0d",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.10.0/vosfs-0.10.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-6e4e1400dfcb18e1ba94/vosfs-0.10.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.10.0.tar.gz",
+        "size": 48034,
+        "digest": "sha256:05e33a6c4a2777a7a74cdaa39fd3ee470bb95f96e7995a18d0dd16384d079981",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.10.0/vosfs-0.10.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-6e4e1400dfcb18e1ba94/vosfs-0.10.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 403256410,
+    "tag": "fsspec-cli-v0.10.0",
+    "name": "fsspec-cli: v0.10.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/fsspec-cli-v0.10.0",
+    "source_created_at": "2026-10-04T23:40:22Z",
+    "source_published_at": "2026-10-04T23:40:51Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420450412,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/fsspec-cli-v0.10.0",
+    "assets": [
+      {
+        "name": "fsspec_cli-0.10.0-py3-none-any.whl",
+        "size": 68531,
+        "digest": "sha256:98897a9d572bd034125aaa31b6e5885909ae7eaaeed74baab9cd69285fa34c91",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.10.0/fsspec_cli-0.10.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-b8be63fad9a6623edb35/fsspec_cli-0.10.0-py3-none-any.whl"
+      },
+      {
+        "name": "fsspec_cli-0.10.0.tar.gz",
+        "size": 187982,
+        "digest": "sha256:e930d8c0ada67934f4a5656361ed29587dfff2fe85a44b6667322cf041e9950a",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/fsspec-cli-v0.10.0/fsspec_cli-0.10.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-b8be63fad9a6623edb35/fsspec_cli-0.10.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 403251693,
+    "tag": "v0.11.0",
+    "name": "v0.11.0",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/v0.11.0",
+    "source_created_at": "2026-10-04T23:22:06Z",
+    "source_published_at": "2026-10-04T23:23:23Z",
+    "draft": false,
+    "prerelease": false,
+    "destination_id": 420450573,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/v0.11.0",
+    "assets": [
+      {
+        "name": "vosfs-0.11.0-py3-none-any.whl",
+        "size": 61954,
+        "digest": "sha256:b5b5185732075f0c08b3b4dec4e476efa0d5ea2e5bce11483654aea85c69249e",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.11.0/vosfs-0.11.0-py3-none-any.whl",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-e6dc5d181440724177dc/vosfs-0.11.0-py3-none-any.whl"
+      },
+      {
+        "name": "vosfs-0.11.0.tar.gz",
+        "size": 54312,
+        "digest": "sha256:ffa705e7471bc016687da3d22c6e8ba39a2845e2f49a236b06dc1a9b8a7fa8ae",
+        "source_url": "https://github.com/shinybrar/vosfs/releases/download/v0.11.0/vosfs-0.11.0.tar.gz",
+        "destination_url": "https://github.com/opencadc/fsspec-tools/releases/download/untagged-e6dc5d181440724177dc/vosfs-0.11.0.tar.gz"
+      }
+    ]
+  },
+  {
+    "source_repository": "shinybrar/vosfs",
+    "source_id": 354025882,
+    "tag": "v0.3.1",
+    "name": "v0.3.1",
+    "source_url": "https://github.com/shinybrar/vosfs/releases/tag/untagged-a5fb7cce9d8caec9930b",
+    "source_created_at": "2026-07-14T19:20:50Z",
+    "source_published_at": null,
+    "draft": true,
+    "prerelease": false,
+    "destination_id": 420450719,
+    "destination_url": "https://github.com/opencadc/fsspec-tools/releases/tag/untagged-e89a96680906cefebdef",
+    "assets": []
+  }
+]

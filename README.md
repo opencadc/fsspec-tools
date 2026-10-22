@@ -33,7 +33,7 @@ part of the offline CI gate.
 
 The packages originated in `shinybrar/vosfs`, then joined the `shinybrar/vostools`
 workspace before moving here. Their original history and release tags are
-preserved, along with relevant side branches and PR head refs under `archive/`.
+preserved, along with relevant side-branch and PR history on `archive/history`.
 The legacy Python vos package and its ancestry are excluded.
 
 See the [migration record](docs/migration/README.md) for the verified commit/ref

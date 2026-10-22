@@ -12,7 +12,7 @@ This is a uv workspace containing `vosfs` (`libs/vosfs`) and `fss-cli`
 - Shared user documentation is in `docs/user/`; build it with
   `uv run --locked --all-packages zensical build --strict --clean`.
 - Do not commit generated `site/`, `dist/`, or environment files.
-- Preserve the original historical tags and `archive/` refs. The migration PR
+- Preserve the original historical tags and the `archive/history` branch. The migration PR
   must be merged with a merge commit to retain its imported ancestry.
 
 Read `libs/vosfs/docs/CONTEXT.md` for domain terminology and relevant decisions
