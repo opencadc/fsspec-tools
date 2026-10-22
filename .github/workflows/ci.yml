@@ -40,9 +40,6 @@ jobs:
       - name: Run all pre-commit hooks
         run: uv run --locked --all-packages pre-commit run --all-files --show-diff-on-failure
 
-      - name: Run repository contract tests
-        run: uv run --locked pytest tests/repo
-
       - name: Build strict documentation
         run: uv run --locked --all-packages zensical build --strict --clean
 

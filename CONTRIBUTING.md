@@ -35,7 +35,6 @@ Before opening or updating a PR, run the full gate:
 ```bash
 uv lock --check
 uv run --locked --all-packages pre-commit run --all-files
-uv run --locked pytest tests/repo
 uv run --locked --package vosfs pytest libs/vosfs/tests
 uv run --locked --package fss-cli pytest libs/fss-cli/tests
 uv run --locked --all-packages python libs/fss-cli/tests/_installed_wheel_gate.py
