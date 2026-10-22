@@ -3,8 +3,10 @@
 Each package has its own release-please PR, version, changelog, and PyPI project.
 Future tags are `vosfs-vX.Y.Z` and `fss-cli-vX.Y.Z`. Historical `v*` and
 `fsspec-cli-v*` tags remain unchanged and never trigger the new publisher.
+GitHub release titles are `vosfs: vX.Y.Z` and `fss-cli: vX.Y.Z`, including
+historical releases. Spaces and colons belong to the title, not the Git tag.
 
-## Initial setup after the migration PR merges
+## Initial publishing setup
 
 The repository starts with both `RELEASE_ENABLED` and `PYPI_ENABLED` set to
 `false`. Missing variables also leave automation disabled.
@@ -41,13 +43,13 @@ historical fss-cli 0.10.0 release to make a comparison link work.
 The one-time `bootstrap-sha` maps the last pre-relicensing formatting commit into
 the reconstructed history. Release-please must include the unreleased license,
 rename, and transfer changes. Once both components have a successful release,
-the bootstrap entry, temporary `always-update` option, and `migration_notes.py`
-workflow step/tool/tests can be removed. Do not replace the bootstrap with `last-release-sha`,
+the bootstrap entry, temporary `always-update` option, and `release_notes.py`
+workflow step/tool/tests and `tools/release-origins.json` can be removed. Do not replace the bootstrap with `last-release-sha`,
 which would keep overriding future release boundaries.
 
-The temporary migration-note correction runs after each initial release PR is
-created or updated. It uses actual historical comparison tags and the recorded
-commit origins to preserve source issue/PR links, and corrects both the generated
+The temporary release-note correction runs after each initial release PR is
+created or updated. It uses actual historical comparison tags and the commit
+origins in `tools/release-origins.json` to preserve source issue/PR links, and corrects both the generated
 PR body and its new changelog section. It leaves later releases and older
 changelog sections untouched. The temporary `always-update` option makes the
 action return initial PRs on retries even if a previous correction failed before
@@ -98,4 +100,4 @@ held up by a package release or a publishing failure.
 GitHub repository access does not configure a PyPI account. A project maintainer
 must establish the Trusted Publishers in the intended PyPI/TestPyPI accounts
 before enabling production uploads. The release-enable variables intentionally
-remain false while the migration is under review.
+remain false until publishing setup and rehearsal are complete.

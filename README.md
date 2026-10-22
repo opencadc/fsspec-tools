@@ -36,6 +36,5 @@ workspace before moving here. Their original history and release tags are
 preserved, along with relevant side-branch and PR history on `archive/history`.
 The legacy Python vos package and its ancestry are excluded.
 
-See the [migration record](docs/migration/README.md) for the verified commit/ref
-maps and the [release guide](docs/releases.md) for publishing and recovery.
+See the [release guide](docs/releases.md) for publishing and recovery.
 Architecture decisions are recorded in [docs/adr/](docs/adr/).

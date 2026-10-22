@@ -30,6 +30,7 @@ def test_release_baseline_excludes_import_and_preserves_unreleased_changes() -> 
     assert CONFIG["separate-pull-requests"] is True
     assert CONFIG["pull-request-title-pattern"] == "chore(repo): release${component} ${version}"
     assert CONFIG["include-component-in-tag"] is True
+    assert CONFIG["include-v-in-release-name"] is True
     assert CONFIG["draft"] is True
     if "bootstrap-sha" in CONFIG:
         assert CONFIG["bootstrap-sha"] == BASELINE
@@ -60,7 +61,7 @@ def test_release_automation_is_disabled_until_explicitly_enabled() -> None:
     assert dispatch["env"]["GH_TOKEN"] == "${{ secrets.GITHUB_TOKEN }}"
     assert "pypi-release" in dispatch["run"]
     assert "docs-publish" not in dispatch["run"]
-    correction = next(step for step in job["steps"] if step.get("run") == "python tools/migration_notes.py")
+    correction = next(step for step in job["steps"] if step.get("run") == "python tools/release_notes.py")
     assert CONFIG["always-update"] is True
     assert correction["if"] == "steps.release.outputs.prs_created == 'true'"
     assert correction["env"]["RELEASE_PRS"] == "${{ steps.release.outputs.prs }}"
