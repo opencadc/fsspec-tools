@@ -6,22 +6,14 @@ on:
     types: [pypi-release]
   workflow_dispatch:
     inputs:
-      package:
-        type: choice
-        options: [vosfs, fss-cli]
-        required: true
       tag:
         description: Existing package-vX.Y.Z tag
-        required: true
-        type: string
-      sha:
-        description: Full commit SHA named by the tag
         required: true
         type: string
       index:
         type: choice
         options: [testpypi, pypi]
-        default: testpypi
+        default: pypi
         required: true
       artifact_run_id:
         description: Reuse immutable distributions from this workflow run (required for recovery)
@@ -54,7 +46,7 @@ jobs:
       - name: Check out trusted main history
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: main
+          ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
 
@@ -62,25 +54,31 @@ jobs:
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PACKAGE: ${{ github.event.client_payload.package || inputs.package }}
-          PACKAGE_PATH: ${{ github.event.client_payload.path || format('libs/{0}', inputs.package) }}
+          EVENT: ${{ github.event_name }}
           TAG: ${{ github.event.client_payload.tag_name || inputs.tag }}
-          SHA: ${{ github.event.client_payload.sha || inputs.sha }}
+          EXPECTED_SHA: ${{ github.event.client_payload.sha }}
           INDEX: ${{ inputs.index || 'pypi' }}
           ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
         run: |
           set -euo pipefail
-          [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]]
-          [[ "$PACKAGE" =~ ^(vosfs|fss-cli)$ && "$PACKAGE_PATH" == "libs/$PACKAGE" ]]
-          [[ "$TAG" =~ ^${PACKAGE}-v[0-9]+\.[0-9]+\.[0-9]+$ && "$SHA" =~ ^[0-9a-f]{40}$ ]]
-          [[ "$INDEX" == "pypi" || "$INDEX" == "testpypi" ]]
-          [[ "$(git rev-parse "refs/tags/$TAG^{commit}")" == "$SHA" ]]
-          git merge-base --is-ancestor "$SHA" origin/main
+          [[ "$GITHUB_REPOSITORY" == "opencadc/fsspec-tools" ]] || exit 1
+          [[ "$TAG" =~ ^(vosfs|fss-cli)-v[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+            echo "Expected a vosfs-vX.Y.Z or fss-cli-vX.Y.Z release tag" >&2
+            exit 1
+          }
+          PACKAGE=${TAG%-v*}
+          SHA=$(git rev-parse "refs/tags/$TAG^{commit}")
+          if [[ "$EVENT" == "repository_dispatch" && "$SHA" != "$EXPECTED_SHA" ]]; then
+            echo "Dispatch SHA does not match the release tag" >&2
+            exit 1
+          fi
+          [[ "$INDEX" == "pypi" || "$INDEX" == "testpypi" ]] || exit 1
+          git merge-base --is-ancestor "$SHA" HEAD
           if [[ -n "$ARTIFACT_RUN_ID" ]]; then
-            [[ "$ARTIFACT_RUN_ID" =~ ^[0-9]+$ ]]
+            [[ "$ARTIFACT_RUN_ID" =~ ^[0-9]+$ ]] || exit 1
             prior=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ARTIFACT_RUN_ID")
-            [[ "$(jq -r '.path' <<<"$prior")" == ".github/workflows/pypi.yml" ]]
-            [[ "$(jq -r '.head_branch' <<<"$prior")" == "main" ]]
+            [[ "$(jq -r '.path' <<<"$prior")" == ".github/workflows/pypi.yml" ]] || exit 1
+            [[ "$(jq -r '.head_branch' <<<"$prior")" == "main" ]] || exit 1
           fi
           deadline=$((SECONDS + 600))
           while true; do
@@ -95,11 +93,17 @@ jobs:
             if (( SECONDS >= deadline )); then echo "Timed out waiting for CI for $SHA" >&2; exit 1; fi
             sleep 30
           done
-          git checkout --detach "$SHA"
           echo "package=$PACKAGE" >> "$GITHUB_OUTPUT"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
           echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           echo "index=$INDEX" >> "$GITHUB_OUTPUT"
+
+      - name: Check out released source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ steps.release.outputs.sha }}
+          path: release-source
+          persist-credentials: false
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
@@ -107,21 +111,23 @@ jobs:
           python-version: "3.12"
 
       - name: Require matching source and manifest versions
+        working-directory: release-source
         env:
           PACKAGE: ${{ steps.release.outputs.package }}
           TAG: ${{ steps.release.outputs.tag }}
         run: |
           set -euo pipefail
           version=${TAG#"${PACKAGE}-v"}
-          [[ "$(uv version --package "$PACKAGE" --short)" == "$version" ]]
-          [[ "$(jq -r --arg path "libs/$PACKAGE" '.[$path]' .release-please-manifest.json)" == "$version" ]]
+          [[ "$(uv version --package "$PACKAGE" --short)" == "$version" ]] || exit 1
+          [[ "$(jq -r --arg path "libs/$PACKAGE" '.[$path]' .release-please-manifest.json)" == "$version" ]] || exit 1
           uv lock --check
 
       - name: Build the released package
         if: inputs.artifact_run_id == ''
+        working-directory: release-source
         env:
           PACKAGE: ${{ steps.release.outputs.package }}
-        run: uv build --no-sources --package "$PACKAGE" --out-dir dist
+        run: uv build --no-sources --package "$PACKAGE" --out-dir ../dist
 
       - name: Recover the retained distributions
         if: inputs.artifact_run_id != ''
@@ -146,7 +152,9 @@ jobs:
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist-${{ steps.release.outputs.package }}-${{ steps.release.outputs.sha }}
-          path: dist/*
+          path: |
+            dist/*.whl
+            dist/*.tar.gz
           if-no-files-found: error
           retention-days: 90
 
@@ -177,20 +185,20 @@ jobs:
           repository-url: ${{ needs.build.outputs.index == 'testpypi' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
           skip-existing: true # Existing files were compared by SHA-256 before this job.
 
-  verify:
-    name: Verify published distributions
+  finalize:
+    name: Verify distributions and finalize release
     needs: [build, publish]
-    if: github.repository == 'opencadc/fsspec-tools' && needs.publish.result == 'success'
+    if: github.repository == 'opencadc/fsspec-tools' && github.ref == 'refs/heads/main' && needs.publish.result == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      contents: read
+      contents: write
       actions: read
     steps:
-      - name: Check out the verified release
+      - name: Check out publishing tools
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          ref: ${{ needs.build.outputs.sha }}
+          ref: ${{ github.sha }}
           persist-credentials: false
       - name: Download the intended distributions
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -214,22 +222,8 @@ jobs:
           echo "Published files could not be verified" >&2
           exit 1
 
-  github-release:
-    name: Finalize the GitHub release
-    needs: [build, verify]
-    if: github.repository == 'opencadc/fsspec-tools' && needs.build.outputs.index == 'pypi' && needs.verify.result == 'success'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-      actions: read
-    steps:
-      - name: Download distributions
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: dist-${{ needs.build.outputs.package }}-${{ needs.build.outputs.sha }}
-          path: dist
       - name: Preserve existing assets and finish the draft
+        if: needs.build.outputs.index == 'pypi'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ needs.build.outputs.tag }}
