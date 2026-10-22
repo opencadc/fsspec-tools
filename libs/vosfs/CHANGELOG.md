@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.12.0](https://github.com/opencadc/fsspec-tools/compare/vosfs-v0.11.0...vosfs-v0.12.0) (2026-10-22)
+## [0.12.0](https://github.com/opencadc/fsspec-tools/compare/v0.11.0...vosfs-v0.12.0) (2026-10-22)
 
 
 ### ⚠ BREAKING CHANGES
@@ -11,15 +11,15 @@
 
 ### Features
 
-* **fss-cli:** bold directory names in ls on a terminal ([#24](https://github.com/opencadc/fsspec-tools/issues/24)) ([7c96d98](https://github.com/opencadc/fsspec-tools/commit/7c96d98fb8b5d78f215f3e7026295fb53c04c639))
-* **fss-cli:** report cp progress and wait for destination metadata ([#25](https://github.com/opencadc/fsspec-tools/issues/25)) ([9fdba9c](https://github.com/opencadc/fsspec-tools/commit/9fdba9ce35cf7309ac9f6374d29706b607d4e0f0))
+* **fss-cli:** bold directory names in ls on a terminal ([#24](https://github.com/shinybrar/vostools/issues/24)) ([7c96d98](https://github.com/opencadc/fsspec-tools/commit/7c96d98fb8b5d78f215f3e7026295fb53c04c639))
+* **fss-cli:** report cp progress and wait for destination metadata ([#25](https://github.com/shinybrar/vostools/issues/25)) ([9fdba9c](https://github.com/opencadc/fsspec-tools/commit/9fdba9ce35cf7309ac9f6374d29706b607d4e0f0))
 
 
 ### Bug Fixes
 
-* **vosfs,fss-cli:** preserve transfer fallbacks ([#27](https://github.com/opencadc/fsspec-tools/issues/27)) ([ac2ef20](https://github.com/opencadc/fsspec-tools/commit/ac2ef2031b4d9134867f080f3ebf6b72f6389be0))
+* **vosfs,fss-cli:** preserve transfer fallbacks ([#27](https://github.com/shinybrar/vostools/issues/27)) ([ac2ef20](https://github.com/opencadc/fsspec-tools/commit/ac2ef2031b4d9134867f080f3ebf6b72f6389be0))
 * **vosfs:** encode literal paths in node and transfer URIs ([377006a](https://github.com/opencadc/fsspec-tools/commit/377006a2f278c3522f4aa5c0f82f530b24e4adc3))
-* **vosfs:** page container listings over the XML parse cap ([#23](https://github.com/opencadc/fsspec-tools/issues/23)) ([5870d6c](https://github.com/opencadc/fsspec-tools/commit/5870d6c7827b81e5199ce16a895371981ac5705a))
+* **vosfs:** page container listings over the XML parse cap ([#23](https://github.com/shinybrar/vostools/issues/23)) ([5870d6c](https://github.com/opencadc/fsspec-tools/commit/5870d6c7827b81e5199ce16a895371981ac5705a))
 * **vosfs:** release metadata indexes during cache invalidation ([936d3b9](https://github.com/opencadc/fsspec-tools/commit/936d3b9ff893a8cf1a3ef5e02f51d295c8fbf5ed))
 
 
@@ -31,12 +31,12 @@
 
 ### Code Refactoring
 
-* **fss-cli:** rename fsspec-cli to fss-cli ([#19](https://github.com/opencadc/fsspec-tools/issues/19)) ([1346833](https://github.com/opencadc/fsspec-tools/commit/1346833371e38a59bc2f13b4ecd1892393f668ee))
+* **fss-cli:** rename fsspec-cli to fss-cli ([#19](https://github.com/shinybrar/vostools/issues/19)) ([1346833](https://github.com/opencadc/fsspec-tools/commit/1346833371e38a59bc2f13b4ecd1892393f668ee))
 
 
 ### Build System
 
-* **vosfs,fss-cli:** relicense under AGPL-3.0-or-later ([#18](https://github.com/opencadc/fsspec-tools/issues/18)) ([c133a74](https://github.com/opencadc/fsspec-tools/commit/c133a74e23cd9230b9fe2dc30ef80b10c81c8bf7))
+* **vosfs,fss-cli:** relicense under AGPL-3.0-or-later ([#18](https://github.com/shinybrar/vostools/issues/18)) ([c133a74](https://github.com/opencadc/fsspec-tools/commit/c133a74e23cd9230b9fe2dc30ef80b10c81c8bf7))
 
 ## [Unreleased]
 
